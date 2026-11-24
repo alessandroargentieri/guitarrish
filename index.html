@@ -55,12 +55,37 @@
   .favbar button.play.on { background:var(--acc2); color:#fff; }
   .favbar button.play:disabled { opacity:.4; }
   .favbar label { font-size:13px; color:var(--mut); display:flex; gap:6px; align-items:center; }
+  #scenarios input[type=text], #scenarios input[type=search] { background:#2d241c; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit; min-width:0; }
+  #scName { flex:1 1 180px; }
+  #scSearch { width:100%; margin-top:10px; }
+  #scenarios .row button, .sc button { background:#2d241c; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit; font-size:14px; cursor:pointer; }
+  #scenarios .row button.primary { background:var(--acc); color:#1a1208; border-color:var(--acc); font-weight:600; }
+  #scList { margin-top:8px; display:flex; flex-direction:column; gap:6px; max-height:260px; overflow:auto; }
+  .sc { display:flex; gap:6px; align-items:center; }
+  .sc .scname { flex:1; text-align:left; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sc.cur .scname { border-color:var(--acc); color:var(--acc); }
+  .sc small { color:var(--mut); font-size:11px; white-space:nowrap; }
   .chord.down { background:var(--acc2); border-color:var(--acc); transform:scale(.97); }
   .chord.down small { color:#ffe3c9; }
 </style>
 </head>
 <body>
 <h1>Guitar<span>rish</span></h1>
+
+<section id="scenarios">
+  <h2>Scenari (canzoni)</h2>
+  <div class="row">
+    <input id="scName" type="text" maxlength="80" placeholder="Titolo dello scenario" autocomplete="off">
+    <button id="scSave" class="primary">💾 Salva</button>
+    <button id="scDown">⬇ Scarica file</button>
+    <button id="scShare">🔗 Condividi</button>
+    <button id="scImport">📂 Importa file</button>
+    <input id="scFile" type="file" accept=".json,application/json" hidden>
+  </div>
+  <input id="scSearch" type="search" placeholder="Cerca scenario per nome…" autocomplete="off">
+  <div id="scList"></div>
+  <div class="hint" id="scMsg">Uno scenario contiene preferiti, extra, durate, ritmo, tempo e notazione.</div>
+</section>
 
 <section>
   <h2>Notazione</h2>
@@ -459,7 +484,7 @@ function buildChords() {
   });
   fs.querySelector('#seqBtn').onclick = () => { if (seq.on) stopAll(); else seqPlay(); };
   fs.querySelector('#seqBtn').disabled = !list.length;
-  const lp = fs.querySelector('#seqLoop'); lp.checked = seq.loop; lp.onchange = () => { seq.loop = lp.checked; };
+  const lp = fs.querySelector('#seqLoop'); lp.checked = seq.loop; lp.onchange = () => { seq.loop = lp.checked; saveWork(); };
   if (list.length) {
     const clr = document.createElement('button');
     clr.className = 'clear'; clr.textContent = 'Svuota';
@@ -501,7 +526,7 @@ function buildPatterns() {
   PATTERNS.forEach((p, i) => {
     const b = document.createElement('button');
     b.textContent = p.name; if (i === patIdx) b.classList.add('on');
-    b.onclick = () => { patIdx = i; loadPattern(); buildPatterns(); };
+    b.onclick = () => { patIdx = i; loadPattern(); buildPatterns(); saveWork(); };
     el.appendChild(b);
   });
 }
@@ -518,7 +543,7 @@ function buildSteps() {
     d.dataset.i = i;
     d.innerHTML = `${t === 'D' || t === 'd' ? '↓' : t === 'U' || t === 'u' ? '↑' : t === '-' ? '·' : t}<small>${t === 'd' || t === 'u' ? 'piano' : t === 'x' ? 'smorz.' : (i % 2 === 0 ? (i / 2 + 1) : '&')}</small>`;
     if (t === 'd' || t === 'u') d.style.opacity = .7;
-    d.onclick = () => { steps[i] = TOKENS[(TOKENS.indexOf(t) + 1) % TOKENS.length]; buildSteps(); };
+    d.onclick = () => { steps[i] = TOKENS[(TOKENS.indexOf(t) + 1) % TOKENS.length]; buildSteps(); saveWork(); };
     el.appendChild(d);
   });
 }
@@ -528,13 +553,144 @@ function highlight(i) {
 
 $('#notation').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  notation = b.dataset.n;
+  notation = b.dataset.n; saveWork();
   document.querySelectorAll('#notation button').forEach(x => x.classList.toggle('on', x === b));
   buildChords();
 });
-$('#bpm').addEventListener('input', e => { bpm = +e.target.value; $('#bpmv').textContent = bpm; });
+$('#bpm').addEventListener('input', e => { bpm = +e.target.value; $('#bpmv').textContent = bpm; saveWork(); });
 
-buildChords(); buildPatterns(); loadPattern();
+// ---------- scenari ----------
+function sanitize(d) {                       // file e link sono input non fidati: si accetta solo ciò che è valido
+  if (!d || typeof d !== 'object') return null;
+  const ok = new Set(CHORDS.map(keyOf));
+  const keys = a => Array.isArray(a) ? [...new Set(a.filter(k => typeof k === 'string' && ok.has(k)))] : [];
+  const f = keys(d.favs), x = keys(d.extras).filter(k => !f.includes(k));
+  const st = Array.isArray(d.steps) ? d.steps.filter(t => TOKENS.includes(t)).slice(0, 32) : [];
+  const dd = {};
+  if (d.durs && typeof d.durs === 'object') for (const k of f) if (DURS.includes(+d.durs[k])) dd[k] = +d.durs[k];
+  return {
+    app: 'guitarrish', v: 1,
+    name: String(d.name == null ? '' : d.name).trim().slice(0, 80) || 'Senza titolo',
+    notation: d.notation === 'en' ? 'en' : 'it',
+    bpm: Math.min(200, Math.max(40, Math.round(+d.bpm) || 100)),
+    steps: st.length >= 2 ? st : PATTERNS[1].steps.split(' '),
+    favs: f, extras: x, durs: dd, loop: d.loop !== false,
+  };
+}
+function snapshot(name) {
+  return { app: 'guitarrish', v: 1, name, notation, bpm, steps: [...steps], favs: [...favs], extras: [...extras],
+    durs: Object.fromEntries(favs.filter(k => durs[k]).map(k => [k, durs[k]])), loop: seq.loop };
+}
+function setSettings(sc) {
+  notation = sc.notation; bpm = sc.bpm; steps = [...sc.steps]; seq.loop = sc.loop; stepIdx = 0;
+  patIdx = PATTERNS.findIndex(p => p.steps === steps.join(' '));
+  document.querySelectorAll('#notation button').forEach(x => x.classList.toggle('on', x.dataset.n === notation));
+  $('#bpm').value = bpm; $('#bpmv').textContent = bpm;
+}
+function applyScenario(sc) {
+  stopAll(); setSettings(sc);
+  favs = [...sc.favs]; extras = [...sc.extras];
+  for (const k of favs) { if (sc.durs[k]) durs[k] = sc.durs[k]; else delete durs[k]; }
+  saveDurs(); saveFavs();
+  buildPatterns(); buildSteps(); buildChords(); saveWork();
+}
+let currentId = null;
+function saveWork() {
+  try { localStorage.setItem('guitarrish.work', JSON.stringify({ notation, bpm, steps, loop: seq.loop, currentId })); } catch (e) {}
+}
+function loadWork() {
+  try {
+    const w = JSON.parse(localStorage.getItem('guitarrish.work') || 'null'); if (!w) return;
+    const sc = sanitize({ notation: w.notation, bpm: w.bpm, steps: w.steps, loop: w.loop });
+    setSettings(sc); currentId = typeof w.currentId === 'string' ? w.currentId : null;
+  } catch (e) {}
+}
+let lib = [];
+try {
+  lib = JSON.parse(localStorage.getItem('guitarrish.scenarios') || '[]')
+    .map(e => ({ id: String(e.id), name: String(e.name || '').slice(0, 80), updated: +e.updated || 0, data: sanitize(e.data) })).filter(e => e.data);
+} catch (e) {}
+function saveLib() { try { localStorage.setItem('guitarrish.scenarios', JSON.stringify(lib)); } catch (e) { msg('Impossibile salvare nel browser (memoria piena o bloccata): scarica il file.'); } }
+const norm = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+let msgT;
+function msg(t) { const m = $('#scMsg'); m.textContent = t; clearTimeout(msgT); msgT = setTimeout(() => { m.textContent = ''; }, 6000); }
+function renderLib() {
+  const q = norm($('#scSearch').value), el = $('#scList'); el.innerHTML = '';
+  const rows = lib.filter(e => norm(e.name).includes(q)).sort((a, b) => a.name.localeCompare(b.name, 'it'));
+  if (!rows.length) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = lib.length ? 'Nessun risultato.' : 'Nessuno scenario salvato.'; el.appendChild(h); return; }
+  rows.forEach(e => {
+    const r = document.createElement('div'); r.className = 'sc' + (e.id === currentId ? ' cur' : '');
+    const mk = (txt, title, fn) => { const b = document.createElement('button'); b.textContent = txt; b.title = title; b.onclick = fn; return b; };
+    const nm = mk(e.name, 'Carica', () => loadScenario(e)); nm.classList.add('scname');
+    const info = document.createElement('small'); info.textContent = `${e.data.favs.length}+${e.data.extras.length} acc. · ${e.data.bpm} bpm`;
+    r.append(nm, info, mk('⬇', 'Scarica file', () => download(e.data)), mk('🔗', 'Condividi link', () => share(e.data)),
+      mk('🗑', 'Elimina', () => { if (confirm(`Eliminare «${e.name}»?`)) { lib = lib.filter(x => x.id !== e.id); if (currentId === e.id) { currentId = null; saveWork(); } saveLib(); renderLib(); } }));
+    el.appendChild(r);
+  });
+}
+function loadScenario(e) {
+  applyScenario(e.data); currentId = e.id; $('#scName').value = e.name; saveWork(); renderLib(); msg(`Caricato «${e.name}».`);
+}
+function saveCurrent() {
+  const name = $('#scName').value.trim().slice(0, 80);
+  if (!name) { msg('Dai un titolo allo scenario.'); $('#scName').focus(); return; }
+  const data = snapshot(name), now = Date.now();
+  let e = lib.find(x => x.id === currentId && norm(x.name) === norm(name));
+  if (!e) {
+    const same = lib.find(x => norm(x.name) === norm(name));
+    if (same && !confirm(`Esiste già «${same.name}». Sovrascriverlo?`)) return;
+    e = same;
+  }
+  if (e) { e.name = name; e.data = data; e.updated = now; }
+  else { e = { id: now.toString(36) + Math.random().toString(36).slice(2, 6), name, data, updated: now }; lib.push(e); }
+  currentId = e.id; saveLib(); saveWork(); renderLib(); msg(`Salvato «${name}».`);
+}
+function download(data) {
+  const slug = norm(data.name).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'scenario';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+  a.download = slug + '.guitarrish.json'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const b64enc = o => { let t = ''; new TextEncoder().encode(JSON.stringify(o)).forEach(c => t += String.fromCharCode(c)); return btoa(t).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+const b64dec = t => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(t.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))));
+async function share(data) {
+  const url = location.href.split('#')[0] + '#s=' + b64enc(data);
+  try {
+    if (navigator.share) { await navigator.share({ title: data.name, url }); return; }
+    await navigator.clipboard.writeText(url); msg(`Link a «${data.name}» copiato negli appunti.`);
+  } catch (e) { if (e && e.name === 'AbortError') return; prompt('Copia il link:', url); }
+}
+function importText(text, fileName) {
+  let sc; try { if (text.length > 200000) throw 0; sc = sanitize(JSON.parse(text)); } catch (e) { sc = null; }
+  if (!sc) { msg('File non valido.'); return; }
+  applyScenario(sc); $('#scName').value = sc.name; saveCurrent();
+}
+$('#scSave').onclick = saveCurrent;
+$('#scName').addEventListener('keydown', e => { if (e.key === 'Enter') saveCurrent(); });
+$('#scDown').onclick = () => download(snapshot($('#scName').value.trim() || 'Senza titolo'));
+$('#scShare').onclick = () => share(snapshot($('#scName').value.trim() || 'Senza titolo'));
+$('#scImport').onclick = () => $('#scFile').click();
+$('#scFile').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) f.text().then(t => importText(t, f.name)); };
+$('#scSearch').addEventListener('input', renderLib);
+
+loadWork();
+if (!steps.length) steps = PATTERNS[patIdx].steps.split(' ');
+buildChords(); buildPatterns(); buildSteps();
+{ const cur = lib.find(e => e.id === currentId); if (cur) $('#scName').value = cur.name; else currentId = null; }
+renderLib();
+// scenario condiviso tramite link (#s=...)
+if (location.hash.startsWith('#s=')) {
+  try {
+    const t = location.hash.slice(3); if (t.length > 40000) throw 0;
+    const sc = sanitize(b64dec(t));
+    if (sc && confirm(`Caricare lo scenario «${sc.name}» ricevuto dal link?\nSostituisce preferiti, extra e impostazioni correnti.`)) {
+      applyScenario(sc); currentId = null; $('#scName').value = sc.name; saveWork(); renderLib();
+      msg(`Caricato «${sc.name}». Premi Salva per tenerlo nella tua lista.`);
+    }
+  } catch (e) { msg('Link non valido.'); }
+  history.replaceState(null, '', location.pathname + location.search);
+}
 initAudio();   // contesto sospeso + pre-calcolo note; si sblocca al primo tocco
 </script>
 </body>
