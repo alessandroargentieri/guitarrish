@@ -447,10 +447,7 @@ function makeChordButton(c, isExtra, secId, idx) {
   const chord = { frets: c[3] };
   b.addEventListener('pointerdown', e => {
     e.preventDefault(); ensureAudio();
-    if (seq.on) {                                   // un click durante la sequenza la interrompe
-      if (!isExtra) { stopAll(); return; }
-      clearTimeout(endTimer); seq.on = false; updateSeqUI();   // un extra la interrompe e suona subito (bridge)
-    }
+    if (seq.on) { clearTimeout(endTimer); seq.on = false; updateSeqUI(); }   // il loop si ferma, ma l'accordo cliccato entra col legato
     if (activeKey === key) { stopAll(); return; }   // stesso accordo: stop
     activeKey = key; markActive();
     curChord = chord;
