@@ -751,18 +751,23 @@ async function syncScenari(force) {            // importa dalla cartella /scenar
     files = Array.isArray(idx.files) ? idx.files.filter(f => typeof f === 'string' && /^[A-Za-z0-9._-]+\.json$/.test(f)).slice(0, 200) : [];
   } catch (e) { if (force) msg('Cartella /scenari non raggiungibile (serve il sito via http, non il file aperto da disco).'); return; }
   let seen = []; try { seen = JSON.parse(localStorage.getItem('guitarrish.seenFiles') || '[]'); } catch (e) {}
-  let n = 0;
+  let n = 0, reopen = null;
   for (const f of files) {
     if (!force && seen.includes(f)) continue;                 // già importato (o eliminato da te): non lo rimetto
     try {
       const r = await fetch('scenari/' + f, { cache: 'no-cache' }); if (!r.ok) continue;
       const sc = sanitize(await r.json()); if (!sc) continue;
-      if (upsertLib(sc, !!force)) n++;                         // auto: non sovrascrive scenari tuoi con lo stesso nome
+      const en = upsertLib(sc, !!force);                       // auto: non sovrascrive scenari tuoi con lo stesso nome
+      if (en) { n++; if (en.id === currentId) reopen = en; }
       if (!seen.includes(f)) seen.push(f);
     } catch (e) {}
   }
   try { localStorage.setItem('guitarrish.seenFiles', JSON.stringify(seen)); } catch (e) {}
-  if (n) { saveLib(); renderLib(); msg(`${n} scenari ${force ? 'aggiornati' : 'aggiunti'} da /scenari.`); }
+  if (n) {
+    saveLib(); renderLib();
+    if (reopen) applyScenario(reopen.data);                   // lo scenario aperto si ricarica con la versione nuova
+    msg(`${n} scenari ${force ? 'aggiornati' : 'aggiunti'} da /scenari${reopen ? ` · «${reopen.name}» ricaricato` : ''}.`);
+  }
   else if (force) msg('Nessun nuovo scenario in /scenari.');
 }
 $('#scSync').onclick = () => syncScenari(true);
