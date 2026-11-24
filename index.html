@@ -34,6 +34,8 @@
   .chord { position:relative; }
   .star { position:absolute; top:2px; right:4px; padding:4px 6px; font-size:16px; font-weight:400; color:var(--mut); line-height:1; }
   .star.on { color:var(--acc); }
+  .star.extra { color:#6fb4e8; }
+  .fav.extra .handle { flex:1; width:auto; }
   button.clear { margin-left:10px; background:none; border:1px solid var(--line); color:var(--mut); border-radius:6px; font-size:11px; padding:2px 8px; cursor:pointer; text-transform:none; letter-spacing:0; }
   .fav { display:flex; flex-direction:column; gap:4px; position:relative; }
   .fav .bar { display:flex; gap:4px; align-items:center; }
@@ -345,11 +347,13 @@ function label(c) {
 const keyOf = c => c[0] + c[1];
 let favs = [];
 try { favs = JSON.parse(localStorage.getItem('guitarrish.favs') || '[]'); } catch (e) {}
-function saveFavs() { try { localStorage.setItem('guitarrish.favs', JSON.stringify(favs)); } catch (e) {} }
+let extras = [];                                          // accordi fuori dal loop (bridge, passaggi): si suonano a mano
+try { extras = JSON.parse(localStorage.getItem('guitarrish.extras') || '[]'); } catch (e) {}
+function saveFavs() { try { localStorage.setItem('guitarrish.favs', JSON.stringify(favs)); localStorage.setItem('guitarrish.extras', JSON.stringify(extras)); } catch (e) {} }
 function markActive() {
   document.querySelectorAll('.chord').forEach(b => b.classList.toggle('down', b.dataset.key === activeKey));
 }
-function makeChordButton(c) {
+function makeChordButton(c, isExtra) {
   const q = c[0], key = keyOf(c);
   const b = document.createElement('button');
   b.className = 'chord ' + QUAL[q].cls; b.dataset.key = key;
@@ -357,21 +361,25 @@ function makeChordButton(c) {
   const alt = (notation === 'it' ? c[1] : c[2]) + sf + (fl ? ' / ' + fl + sf : '');
   b.innerHTML = `${label(c)}<small>${alt}</small>`;
   const star = document.createElement('span');
-  const isFav = favs.includes(key);
-  star.className = 'star' + (isFav ? ' on' : '');
-  star.textContent = isFav ? '★' : '☆';
-  star.title = isFav ? 'Togli dai preferiti' : 'Aggiungi ai preferiti';
-  star.addEventListener('pointerdown', e => {
+  const inFav = favs.includes(key), inExtra = extras.includes(key);
+  star.className = 'star' + (inFav ? ' on' : inExtra ? ' extra' : '');
+  star.textContent = inFav ? '★' : inExtra ? '◆' : '☆';
+  star.title = inFav ? 'Nel loop · tocca per spostarlo negli extra' : inExtra ? 'Extra (fuori dal loop) · tocca per toglierlo' : 'Tocca per aggiungerlo ai preferiti del loop';
+  star.addEventListener('pointerdown', e => {   // ☆ → ★ loop → ◆ extra → ☆
     e.preventDefault(); e.stopPropagation();
-    const i = favs.indexOf(key);
-    if (i >= 0) favs.splice(i, 1); else favs.push(key);
+    if (inFav) { favs.splice(favs.indexOf(key), 1); extras.push(key); }
+    else if (inExtra) extras.splice(extras.indexOf(key), 1);
+    else favs.push(key);
     saveFavs(); buildChords();
   });
   b.appendChild(star);
   const chord = { frets: c[3] };
   b.addEventListener('pointerdown', e => {
     e.preventDefault(); ensureAudio();
-    if (seq.on) { stopAll(); return; }   // un click durante la sequenza la interrompe
+    if (seq.on) {                                   // un click durante la sequenza la interrompe
+      if (!isExtra) { stopAll(); return; }
+      clearTimeout(endTimer); seq.on = false; updateSeqUI();   // un extra la interrompe e suona subito (bridge)
+    }
     if (activeKey === key) { stopAll(); return; }   // stesso accordo: stop
     activeKey = key; markActive();
     curChord = chord;
@@ -381,7 +389,7 @@ function makeChordButton(c) {
   b.addEventListener('contextmenu', e => e.preventDefault());
   return b;
 }
-function attachDrag(handle, el, container) {
+function attachDrag(handle, el, container, which) {
   handle.addEventListener('pointerdown', e => {
     e.preventDefault(); e.stopPropagation();
     handle.setPointerCapture(e.pointerId);
@@ -401,9 +409,11 @@ function attachDrag(handle, el, container) {
       handle.removeEventListener('pointerup', up); handle.removeEventListener('pointercancel', up);
       el.classList.remove('dragging'); clear();
       if (target) {
-        const k = el.dataset.key; favs = favs.filter(x => x !== k);
-        const ti = favs.indexOf(target.dataset.key);
-        favs.splice(after ? ti + 1 : ti, 0, k);
+        const k = el.dataset.key;
+        const arr = (which === 'extras' ? extras : favs).filter(x => x !== k);
+        const ti = arr.indexOf(target.dataset.key);
+        arr.splice(after ? ti + 1 : ti, 0, k);
+        if (which === 'extras') extras = arr; else favs = arr;
         saveFavs(); buildChords();
       }
     };
@@ -437,7 +447,7 @@ function buildChords() {
     st.append(mk('−', -1), lab, mk('+', 1));
     const sel = st;
     bar.append(h, sel); w.appendChild(bar);
-    attachDrag(h, w, fg);
+    attachDrag(h, w, fg, 'favs');
     fg.appendChild(w);
   });
   fs.querySelector('#seqBtn').onclick = () => { if (seq.on) stopAll(); else seqPlay(); };
@@ -446,10 +456,27 @@ function buildChords() {
   if (list.length) {
     const clr = document.createElement('button');
     clr.className = 'clear'; clr.textContent = 'Svuota';
-    clr.onclick = () => { stopAll(); favs = []; saveFavs(); buildChords(); };
+    clr.onclick = () => { stopAll(); favs = []; saveFavs(); buildChords(); };   // svuota solo il loop
     fs.querySelector('h2').appendChild(clr);
   }
   root.appendChild(fs);
+  const es = document.createElement('section');
+  es.innerHTML = `<h2>◆ Extra · fuori dal loop (bridge, passaggi)</h2>
+    <div class="hint" style="margin:-4px 0 8px">Non fanno parte della sequenza: suonali a mano. Se li premi mentre il loop gira, il loop si ferma e suona l'extra. Per metterne uno qui tocca la stella di un accordo finché diventa ◆.</div>
+    <div class="chords favgrid"></div>`;
+  const eg = es.querySelector('.chords');
+  const elist = extras.map(k => CHORDS.find(c => keyOf(c) === k)).filter(Boolean);
+  if (!elist.length) eg.innerHTML = '<div class="hint">Nessun extra.</div>';
+  elist.forEach(c => {
+    const w = document.createElement('div'); w.className = 'fav extra'; w.dataset.key = keyOf(c);
+    w.appendChild(makeChordButton(c, true));
+    const bar = document.createElement('div'); bar.className = 'bar';
+    const h = document.createElement('div'); h.className = 'handle'; h.textContent = '⠿'; h.title = 'Trascina per riordinare';
+    bar.appendChild(h); w.appendChild(bar);
+    attachDrag(h, w, eg, 'extras');
+    eg.appendChild(w);
+  });
+  root.appendChild(es);
   const groups = [];
   for (const q of Object.keys(QUAL)) for (const sharp of [false, true])
     groups.push([q, sharp, QUAL[q].label + (sharp ? ' · diesis' : '')]);
