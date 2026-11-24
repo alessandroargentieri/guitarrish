@@ -260,7 +260,7 @@ const DURS = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16];   // numero di pennate (
 let durs = {};
 try { durs = JSON.parse(localStorage.getItem('guitarrish.durs') || '{}'); } catch (e) {}
 function saveDurs() { try { localStorage.setItem('guitarrish.durs', JSON.stringify(durs)); } catch (e) {} }
-const durOf = key => durs[key] || 1;                       // in battute del pattern
+const durOf = key => durs[key] || 2;                       // in battute del pattern
 const favChords = () => favs.map(k => CHORDS.find(c => keyOf(c) === k)).filter(Boolean);
 function applySeqChord(change) {
   const list = favChords(); if (!list.length) return false;
@@ -430,7 +430,7 @@ function buildChords() {
     const h = document.createElement('div'); h.className = 'handle'; h.textContent = '⠿'; h.title = 'Trascina per riordinare';
     const st = document.createElement('div'); st.className = 'stepper'; st.title = 'Numero di pennate (ripetizioni del ritmo) prima di passare al prossimo accordo';
     const mk = (t, d) => { const x = document.createElement('button'); x.textContent = t; x.onclick = () => {
-      let i = DURS.indexOf(durOf(key)); if (i < 0) i = 1;
+      let i = DURS.indexOf(durOf(key)); if (i < 0) i = DURS.indexOf(2);
       i = Math.min(DURS.length - 1, Math.max(0, i + d)); durs[key] = DURS[i]; saveDurs(); lab.textContent = fmt(DURS[i]); }; return x; };
     const fmt = d => (d === 0.5 ? '½' : d) + ' pen.';
     const lab = document.createElement('span'); lab.textContent = fmt(durOf(key));
