@@ -38,6 +38,10 @@
   .fav { display:flex; flex-direction:column; gap:4px; position:relative; }
   .fav .bar { display:flex; gap:4px; align-items:center; }
   .fav .handle { flex:0 0 auto; width:34px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:6px; background:#2d241c; border:1px solid var(--line); color:var(--mut); touch-action:none; cursor:grab; font-size:16px; }
+  .stepper { flex:1; min-width:0; height:30px; display:flex; align-items:center; background:#2d241c; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+  .stepper button { width:26px; height:100%; border:0; background:none; color:var(--acc); font-size:18px; line-height:1; cursor:pointer; padding:0; }
+  .stepper span { flex:1; text-align:center; font-size:12px; white-space:nowrap; }
+  .favgrid { grid-template-columns:repeat(auto-fill,minmax(124px,1fr)) !important; }
   .fav select { flex:1; min-width:0; height:30px; background:#2d241c; color:var(--txt); border:1px solid var(--line); border-radius:6px; font:inherit; font-size:12px; }
   .fav.dragging { opacity:.4; }
   .fav.drop-before::before, .fav.drop-after::after { content:''; position:absolute; top:0; bottom:0; width:4px; border-radius:2px; background:var(--acc); }
@@ -252,7 +256,7 @@ function silence() {
 // ---------- sequencer ----------
 const seq = { on: false, i: 0, left: 0, loop: true };
 let endTimer = null;
-const DURS = [0.5, 1, 2, 3, 4];
+const DURS = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16];   // numero di pennate (ripetizioni del ritmo)
 let durs = {};
 try { durs = JSON.parse(localStorage.getItem('guitarrish.durs') || '{}'); } catch (e) {}
 function saveDurs() { try { localStorage.setItem('guitarrish.durs', JSON.stringify(durs)); } catch (e) {} }
@@ -413,7 +417,8 @@ function buildChords() {
   fs.innerHTML = `<h2>★ Preferiti (scorciatoie per il brano)</h2>
     <div class="favbar"><button class="play" id="seqBtn"></button>
     <label><input type="checkbox" id="seqLoop"> Ripeti</label></div>
-    <div class="chords"></div>`;
+    <div class="hint" style="margin:-4px 0 8px">Sotto ogni accordo: ⠿ trascina per riordinare · − / + = numero di pennate (ripetizioni del ritmo) prima del prossimo accordo.</div>
+    <div class="chords favgrid"></div>`;
   const fg = fs.querySelector('.chords');
   const list = favChords();
   if (!list.length) fg.innerHTML = '<div class="hint">Tocca la ☆ in un angolo di un accordo per metterlo qui.</div>';
@@ -423,9 +428,14 @@ function buildChords() {
     w.appendChild(makeChordButton(c));
     const bar = document.createElement('div'); bar.className = 'bar';
     const h = document.createElement('div'); h.className = 'handle'; h.textContent = '⠿'; h.title = 'Trascina per riordinare';
-    const sel = document.createElement('select'); sel.title = 'Durata in battute (per la riproduzione in ordine)';
-    DURS.forEach(d => { const o = document.createElement('option'); o.value = d; o.textContent = (d === 0.5 ? '½' : d) + ' batt.'; if (d === durOf(key)) o.selected = true; sel.appendChild(o); });
-    sel.onchange = () => { durs[key] = +sel.value; saveDurs(); };
+    const st = document.createElement('div'); st.className = 'stepper'; st.title = 'Numero di pennate (ripetizioni del ritmo) prima di passare al prossimo accordo';
+    const mk = (t, d) => { const x = document.createElement('button'); x.textContent = t; x.onclick = () => {
+      let i = DURS.indexOf(durOf(key)); if (i < 0) i = 1;
+      i = Math.min(DURS.length - 1, Math.max(0, i + d)); durs[key] = DURS[i]; saveDurs(); lab.textContent = fmt(DURS[i]); }; return x; };
+    const fmt = d => (d === 0.5 ? '½' : d) + ' pen.';
+    const lab = document.createElement('span'); lab.textContent = fmt(durOf(key));
+    st.append(mk('−', -1), lab, mk('+', 1));
+    const sel = st;
     bar.append(h, sel); w.appendChild(bar);
     attachDrag(h, w, fg);
     fg.appendChild(w);
