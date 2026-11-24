@@ -65,6 +65,14 @@
   .sc .scname { flex:1; text-align:left; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .sc.cur .scname { border-color:var(--acc); color:var(--acc); }
   .sc small { color:var(--mut); font-size:11px; white-space:nowrap; }
+  .secbox { margin-bottom:12px; }
+  .secbox.target { border-color:var(--acc); }
+  input.secname { background:#2d241c; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit; font-weight:600; flex:1 1 140px; min-width:0; }
+  button.pill { background:none; border:1px solid var(--line); color:var(--mut); border-radius:999px; padding:6px 10px; font:inherit; font-size:12px; cursor:pointer; }
+  button.pill.on { border-color:var(--acc); color:var(--acc); }
+  button.addsec { width:100%; padding:14px; margin-bottom:12px; background:none; border:2px dashed var(--line); border-radius:12px; color:var(--acc); font:inherit; font-size:16px; font-weight:600; cursor:pointer; }
+  .fav .bar .mini { flex:1; height:30px; background:#2d241c; border:1px solid var(--line); border-radius:6px; color:var(--txt); cursor:pointer; padding:0; }
+  .fav .bar .handle { flex:1; width:auto; }
   .chord.down { background:var(--acc2); border-color:var(--acc); transform:scale(.97); }
   .chord.down small { color:#ffe3c9; }
 </style>
@@ -282,29 +290,29 @@ function silence() {
 }
 
 // ---------- sequencer ----------
-const seq = { on: false, i: 0, left: 0, loop: true };
+const seq = { on: false, sec: null, i: 0, left: 0 };
 let endTimer = null;
 const DURS = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16];   // numero di pennate (ripetizioni del ritmo)
-let durs = {};
-try { durs = JSON.parse(localStorage.getItem('guitarrish.durs') || '{}'); } catch (e) {}
-function saveDurs() { try { localStorage.setItem('guitarrish.durs', JSON.stringify(durs)); } catch (e) {} }
-const durOf = key => durs[key] || 1;                       // in battute del pattern
-const favChords = () => favs.map(k => CHORDS.find(c => keyOf(c) === k)).filter(Boolean);
+const secById = id => secs.find(x => x.id === id);
+function seqItems() {
+  const sc = secById(seq.sec);
+  return sc ? sc.items.map(it => ({ c: CHORDS.find(c => keyOf(c) === it.k), d: it.d })).filter(x => x.c) : [];
+}
 function applySeqChord(change) {
-  const list = favChords(); if (!list.length) return false;
+  const list = seqItems(); if (!list.length) return false;
   if (seq.i >= list.length) seq.i = 0;
-  const c = list[seq.i], key = keyOf(c);
-  curChord = { frets: c[3] }; activeKey = key; markActive();
-  seq.left = Math.max(1, Math.round(durOf(key) * steps.length));
+  const { c, d } = list[seq.i];
+  curChord = { frets: c[3] }; activeKey = keyOf(c); markActive();
+  seq.left = Math.max(1, Math.round(d * steps.length));
   if (change) pendingFade = true;
   return true;
 }
 function seqStep() {                                       // false = sequenza finita
   if (!seq.on) return true;
   if (seq.left <= 0) {
-    const n = favChords().length;
+    const n = seqItems().length, sc = secById(seq.sec);
     let next = seq.i + 1;
-    if (next >= n) { if (seq.loop) next = 0; else return false; }
+    if (next >= n) { if (sc && sc.loop) next = 0; else return false; }
     seq.i = next; applySeqChord(true);
   }
   seq.left--; return true;
@@ -314,18 +322,20 @@ function seqEnd() {                                        // fine naturale: las
   const ms = Math.max(0, (nextTime - ctx.currentTime) * 1000) + 350;
   endTimer = setTimeout(() => { silence(); seq.on = false; activeKey = null; markActive(); highlight(-1); updateSeqUI(); }, ms);
 }
-function seqPlay() {
+function seqPlay(id) {
   ensureAudio();
-  if (!favChords().length) return;
   if (running) stopSeq();
   clearTimeout(endTimer);
-  seq.on = true; seq.i = 0; applySeqChord(false);
+  seq.sec = id; seq.on = true; seq.i = 0;
+  if (!applySeqChord(false)) { seq.on = false; return; }
   startSeq(); updateSeqUI();
 }
 function updateSeqUI() {
-  const b = document.getElementById('seqBtn'); if (!b) return;
-  b.textContent = seq.on ? '■ Stop' : '▶ Suona in ordine';
-  b.classList.toggle('on', seq.on);
+  document.querySelectorAll('.seqBtn').forEach(b => {
+    const on = seq.on && seq.sec === b.dataset.sec;
+    b.textContent = on ? '■ Stop' : '▶ Suona in ordine';
+    b.classList.toggle('on', on);
+  });
 }
 let pendingFade = false, running = false, stepIdx = 0, nextTime = 0, timer = null, curChord = null;
 function stepDur() { return 60 / bpm / 2; }
@@ -371,32 +381,60 @@ function label(c) {
   return (notation === 'it' ? it : en) + QUAL[q].suf;
 }
 const keyOf = c => c[0] + c[1];
-let favs = [];
-try { favs = JSON.parse(localStorage.getItem('guitarrish.favs') || '[]'); } catch (e) {}
-let extras = [];                                          // accordi fuori dal loop (bridge, passaggi): si suonano a mano
-try { extras = JSON.parse(localStorage.getItem('guitarrish.extras') || '[]'); } catch (e) {}
-function saveFavs() { try { localStorage.setItem('guitarrish.favs', JSON.stringify(favs)); localStorage.setItem('guitarrish.extras', JSON.stringify(extras)); } catch (e) {} }
-function markActive() {
-  document.querySelectorAll('.chord').forEach(b => b.classList.toggle('down', b.dataset.key === activeKey));
+const uid = () => Math.random().toString(36).slice(2, 8);
+const newSec = name => ({ id: uid(), name, loop: true, items: [] });
+function cleanSecs(raw) {                                  // valida sezioni (da storage, file o link)
+  const ok = new Set(CHORDS.map(keyOf)), seen = new Set();
+  let out = (Array.isArray(raw) ? raw : []).slice(0, 20).filter(x => x && typeof x === 'object').map((x, i) => {
+    let id = typeof x.id === 'string' && /^[a-z0-9]{1,12}$/.test(x.id) ? x.id : uid();
+    while (seen.has(id)) id = uid(); seen.add(id);
+    return {
+      id, name: String(x.name == null ? '' : x.name).trim().slice(0, 40) || 'Ritornello ' + (i + 1), loop: x.loop !== false,
+      items: (Array.isArray(x.items) ? x.items : []).slice(0, 64).filter(it => it && ok.has(it.k)).map(it => ({ k: it.k, d: DURS.includes(+it.d) ? +it.d : 1 })),
+    };
+  });
+  if (!out.length) out = [newSec('Ritornello 1')];
+  return out;
 }
-function makeChordButton(c, isExtra) {
+const cleanKeys = a => Array.isArray(a) ? [...new Set(a.filter(k => typeof k === 'string' && CHORDS.some(c => keyOf(c) === k)))] : [];
+let secs = [], extras = [], targetSec = null;               // ritornelli (loop in ordine) + extra (fuori dal loop, a mano)
+try {
+  const j = JSON.parse(localStorage.getItem('guitarrish.secs') || 'null');
+  if (j) { secs = cleanSecs(j.secs); extras = cleanKeys(j.extras); targetSec = j.target; }
+  else {                                                    // migrazione dal formato precedente
+    const f = cleanKeys(JSON.parse(localStorage.getItem('guitarrish.favs') || '[]'));
+    const dd = JSON.parse(localStorage.getItem('guitarrish.durs') || '{}');
+    secs = cleanSecs([{ name: 'Ritornello 1', items: f.map(k => ({ k, d: dd[k] })) }]);
+    extras = cleanKeys(JSON.parse(localStorage.getItem('guitarrish.extras') || '[]'));
+  }
+} catch (e) { secs = cleanSecs([]); }
+if (!secById(targetSec)) targetSec = secs[0].id;
+function saveSecs() { try { localStorage.setItem('guitarrish.secs', JSON.stringify({ secs, extras, target: targetSec })); } catch (e) {} }
+function markActive() {
+  document.querySelectorAll('.chord').forEach(b => {
+    const on = seq.on && b.dataset.sec ? (b.dataset.sec === seq.sec && +b.dataset.idx === seq.i) : b.dataset.key === activeKey;
+    b.classList.toggle('down', on);
+  });
+}
+function makeChordButton(c, isExtra, secId, idx) {
   const q = c[0], key = keyOf(c);
   const b = document.createElement('button');
   b.className = 'chord ' + QUAL[q].cls; b.dataset.key = key;
+  if (secId) { b.dataset.sec = secId; b.dataset.idx = idx; }
   const sf = QUAL[q].suf, fl = notation === 'it' ? c[4] : c[5];
   const alt = (notation === 'it' ? c[1] : c[2]) + sf + (fl ? ' / ' + fl + sf : '');
   b.innerHTML = `${label(c)}<small>${alt}</small>`;
   const star = document.createElement('span');
-  const inFav = favs.includes(key), inExtra = extras.includes(key);
+  const inFav = secs.some(x => x.items.some(it => it.k === key)), inExtra = extras.includes(key);
   star.className = 'star' + (inFav ? ' on' : inExtra ? ' extra' : '');
   star.textContent = inFav ? '★' : inExtra ? '◆' : '☆';
-  star.title = inFav ? 'Nel loop · tocca per spostarlo negli extra' : inExtra ? 'Extra (fuori dal loop) · tocca per toglierlo' : 'Tocca per aggiungerlo ai preferiti del loop';
-  star.addEventListener('pointerdown', e => {   // ☆ → ★ loop → ◆ extra → ☆
+  star.title = inFav ? 'In un ritornello · tocca per spostarlo negli extra' : inExtra ? 'Extra (fuori dal loop) · tocca per toglierlo' : 'Tocca per aggiungerlo al ritornello selezionato';
+  star.addEventListener('pointerdown', e => {   // ☆ → ★ ritornello selezionato → ◆ extra → ☆
     e.preventDefault(); e.stopPropagation();
-    if (inFav) { favs.splice(favs.indexOf(key), 1); extras.push(key); }
+    if (inFav) { secs.forEach(x => { x.items = x.items.filter(it => it.k !== key); }); extras.push(key); }
     else if (inExtra) extras.splice(extras.indexOf(key), 1);
-    else favs.push(key);
-    saveFavs(); buildChords();
+    else (secById(targetSec) || secs[0]).items.push({ k: key, d: 1 });
+    saveSecs(); buildChords();
   });
   b.appendChild(star);
   const chord = { frets: c[3] };
@@ -415,7 +453,7 @@ function makeChordButton(c, isExtra) {
   b.addEventListener('contextmenu', e => e.preventDefault());
   return b;
 }
-function attachDrag(handle, el, container, which) {
+function attachDrag(handle, el, container) {
   handle.addEventListener('pointerdown', e => {
     e.preventDefault(); e.stopPropagation();
     handle.setPointerCapture(e.pointerId);
@@ -440,13 +478,17 @@ function attachDrag(handle, el, container, which) {
       handle.removeEventListener('pointerup', up); handle.removeEventListener('pointercancel', up);
       el.classList.remove('dragging');
       const z = zone, tg = target, af = after; clear();
-      if (z) {                                        // sposta (anche tra Preferiti ed Extra)
-        const k = el.dataset.key;
-        favs = favs.filter(x => x !== k); extras = extras.filter(x => x !== k);
-        const arr = z.dataset.list === 'extras' ? extras : favs;
-        const ti = tg ? arr.indexOf(tg.dataset.key) : -1;
-        if (ti >= 0) arr.splice(af ? ti + 1 : ti, 0, k); else arr.push(k);
-        saveFavs(); buildChords();
+      if (z) {                                        // sposta (anche tra ritornelli ed Extra)
+        const lst = id => id === 'extras' ? extras : (secById(id) || {}).items;
+        const src = lst(container.dataset.list), dst = lst(z.dataset.list), si = +el.dataset.idx;
+        if (!src || !dst) return;
+        let pos = tg ? +tg.dataset.idx + (af ? 1 : 0) : dst.length;
+        if (src === dst && si < pos) pos--;
+        const bothSecs = src !== dst && container.dataset.list !== 'extras' && z.dataset.list !== 'extras';
+        const it = bothSecs ? src[si] : src.splice(si, 1)[0];       // tra due ritornelli: copia, non sposta
+        const key = typeof it === 'string' ? it : it.k;
+        dst.splice(pos, 0, z.dataset.list === 'extras' ? key : { k: key, d: typeof it === 'string' ? 1 : it.d });
+        saveSecs(); buildChords();
       }
     };
     handle.addEventListener('pointermove', move);
@@ -455,57 +497,72 @@ function attachDrag(handle, el, container, which) {
 }
 function buildChords() {
   const root = $('#chords'); root.innerHTML = '';
-  const fs = document.createElement('section');
-  fs.innerHTML = `<h2>★ Preferiti (scorciatoie per il brano)</h2>
-    <div class="favbar"><button class="play" id="seqBtn"></button>
-    <label><input type="checkbox" id="seqLoop"> Ripeti</label></div>
-    <div class="hint" style="margin:-4px 0 8px">Sotto ogni accordo: ⠿ trascina per riordinare · − / + = numero di pennate (ripetizioni del ritmo) prima del prossimo accordo.</div>
-    <div class="chords favgrid"></div>`;
-  const fg = fs.querySelector('.chords'); fg.dataset.list = 'favs';
-  const list = favChords();
-  if (!list.length) fg.innerHTML = '<div class="hint">Tocca la ☆ in un angolo di un accordo per metterlo qui.</div>';
-  list.forEach(c => {
-    const key = keyOf(c);
-    const w = document.createElement('div'); w.className = 'fav'; w.dataset.key = key;
-    w.appendChild(makeChordButton(c));
-    const bar = document.createElement('div'); bar.className = 'bar';
-    const h = document.createElement('div'); h.className = 'handle'; h.textContent = '⠿'; h.title = 'Trascina per riordinare';
-    const st = document.createElement('div'); st.className = 'stepper'; st.title = 'Numero di pennate (ripetizioni del ritmo) prima di passare al prossimo accordo';
-    const mk = (t, d) => { const x = document.createElement('button'); x.textContent = t; x.onclick = () => {
-      let i = DURS.indexOf(durOf(key)); if (i < 0) i = DURS.indexOf(1);
-      i = Math.min(DURS.length - 1, Math.max(0, i + d)); durs[key] = DURS[i]; saveDurs(); lab.textContent = fmt(DURS[i]); }; return x; };
-    const fmt = d => (d === 0.5 ? '½' : d) + ' pen.';
-    const lab = document.createElement('span'); lab.textContent = fmt(durOf(key));
-    st.append(mk('−', -1), lab, mk('+', 1));
-    const sel = st;
-    bar.append(h, sel); w.appendChild(bar);
-    attachDrag(h, w, fg, 'favs');
-    fg.appendChild(w);
+  const intro = document.createElement('div'); intro.className = 'hint'; intro.style.margin = '0 0 8px';
+  intro.textContent = 'Ritornelli: ognuno è un loop di accordi che suona in ordine. La stella ★ aggiunge gli accordi al ritornello con «Aggiungi qui». Sotto ogni accordo: ⠿ trascina (tra ritornelli = copia, da/verso gli Extra = sposta) · ⧉ duplica · ✕ rimuovi · − / + numero di pennate.';
+  root.appendChild(intro);
+  secs.forEach((sc, si) => {
+    const box = document.createElement('section'); box.className = 'secbox' + (sc.id === targetSec ? ' target' : '');
+    const hd = document.createElement('div'); hd.className = 'favbar';
+    const nm = document.createElement('input'); nm.type = 'text'; nm.className = 'secname'; nm.maxLength = 40; nm.value = sc.name; nm.setAttribute('aria-label', 'Nome del ritornello');
+    nm.onchange = () => { sc.name = nm.value.trim().slice(0, 40) || 'Ritornello ' + (si + 1); nm.value = sc.name; saveSecs(); };
+    const play = document.createElement('button'); play.className = 'play seqBtn'; play.dataset.sec = sc.id; play.disabled = !sc.items.length;
+    play.onclick = () => { if (seq.on && seq.sec === sc.id) stopAll(); else seqPlay(sc.id); };
+    const lab = document.createElement('label'); const lp = document.createElement('input'); lp.type = 'checkbox'; lp.checked = sc.loop;
+    lp.onchange = () => { sc.loop = lp.checked; saveSecs(); }; lab.append(lp, ' Ripeti');
+    const tg = document.createElement('button'); tg.className = 'pill' + (sc.id === targetSec ? ' on' : ''); tg.textContent = sc.id === targetSec ? '★ Aggiungi qui' : 'Aggiungi qui';
+    tg.title = 'Gli accordi che marchi con la stella finiscono in questo ritornello';
+    tg.onclick = () => { targetSec = sc.id; saveSecs(); buildChords(); };
+    const del = document.createElement('button'); del.className = 'clear'; del.textContent = secs.length > 1 ? '✕ Elimina' : 'Svuota';
+    del.onclick = () => {
+      if (secs.length > 1) { if (sc.items.length && !confirm(`Eliminare «${sc.name}»?`)) return; stopAll(); secs.splice(si, 1); if (targetSec === sc.id) targetSec = secs[0].id; }
+      else { stopAll(); sc.items = []; }
+      saveSecs(); buildChords();
+    };
+    hd.append(nm, play, lab, tg, del); box.appendChild(hd);
+    const fg = document.createElement('div'); fg.className = 'chords favgrid'; fg.dataset.list = sc.id; box.appendChild(fg);
+    const list = sc.items.map((it, idx) => ({ it, idx, c: CHORDS.find(c => keyOf(c) === it.k) })).filter(x => x.c);
+    if (!list.length) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = 'Vuoto: tocca la ☆ sugli accordi (con «Aggiungi qui» attivo) o trascinaci un accordo.'; fg.appendChild(h); }
+    list.forEach(({ it, idx, c }) => {
+      const w = document.createElement('div'); w.className = 'fav'; w.dataset.idx = idx;
+      w.appendChild(makeChordButton(c, false, sc.id, idx));
+      const bar = document.createElement('div'); bar.className = 'bar';
+      const h = document.createElement('div'); h.className = 'handle'; h.textContent = '⠿'; h.title = 'Trascina per riordinare';
+      const mini = (t, title, fn) => { const x = document.createElement('button'); x.className = 'mini'; x.textContent = t; x.title = title; x.onclick = fn; return x; };
+      bar.append(h,
+        mini('⧉', 'Duplica (stesso accordo di nuovo, per esempio G D G C)', () => { sc.items.splice(idx + 1, 0, { k: it.k, d: it.d }); saveSecs(); buildChords(); }),
+        mini('✕', 'Rimuovi da questo ritornello', () => { stopAll(); sc.items.splice(idx, 1); saveSecs(); buildChords(); }));
+      const st = document.createElement('div'); st.className = 'stepper'; st.title = 'Numero di pennate (ripetizioni del ritmo) prima di passare al prossimo accordo';
+      const fmt = d => (d === 0.5 ? '½' : d) + ' pen.';
+      const val = document.createElement('span'); val.textContent = fmt(it.d);
+      const step = (t, d) => { const x = document.createElement('button'); x.textContent = t; x.onclick = () => {
+        let i = DURS.indexOf(it.d); if (i < 0) i = DURS.indexOf(1);
+        it.d = DURS[Math.min(DURS.length - 1, Math.max(0, i + d))]; saveSecs(); val.textContent = fmt(it.d); }; return x; };
+      st.append(step('−', -1), val, step('+', 1));
+      w.append(bar, st);
+      attachDrag(h, w, fg);
+      fg.appendChild(w);
+    });
+    root.appendChild(box);
   });
-  fs.querySelector('#seqBtn').onclick = () => { if (seq.on) stopAll(); else seqPlay(); };
-  fs.querySelector('#seqBtn').disabled = !list.length;
-  const lp = fs.querySelector('#seqLoop'); lp.checked = seq.loop; lp.onchange = () => { seq.loop = lp.checked; saveWork(); };
-  if (list.length) {
-    const clr = document.createElement('button');
-    clr.className = 'clear'; clr.textContent = 'Svuota';
-    clr.onclick = () => { stopAll(); favs = []; saveFavs(); buildChords(); };   // svuota solo il loop
-    fs.querySelector('h2').appendChild(clr);
-  }
-  root.appendChild(fs);
+  const add = document.createElement('button'); add.className = 'addsec'; add.textContent = '+ Aggiungi ritornello';
+  add.onclick = () => { const n = newSec('Ritornello ' + (secs.length + 1)); secs.push(n); targetSec = n.id; saveSecs(); buildChords(); };
+  root.appendChild(add);
   const es = document.createElement('section');
-  es.innerHTML = `<h2>◆ Extra · fuori dal loop (bridge, passaggi)</h2>
-    <div class="hint" style="margin:-4px 0 8px">Non fanno parte della sequenza: suonali a mano. Se li premi mentre il loop gira, il loop si ferma e suona l'extra. Per metterne uno qui trascina un preferito con ⠿ oppure tocca la stella finché diventa ◆.</div>
+  es.innerHTML = `<h2>◆ Extra · fuori dai loop (bridge, passaggi)</h2>
+    <div class="hint" style="margin:-4px 0 8px">Non fanno parte della sequenza: suonali a mano. Se li premi mentre il loop gira, il loop si ferma e suona l'extra. Per metterne uno qui trascina un accordo con ⠿ oppure tocca la stella finché diventa ◆.</div>
     <div class="chords favgrid"></div>`;
   const eg = es.querySelector('.chords'); eg.dataset.list = 'extras';
-  const elist = extras.map(k => CHORDS.find(c => keyOf(c) === k)).filter(Boolean);
+  const elist = extras.map(k => CHORDS.find(c => keyOf(c) === k)).filter(Boolean);   // (indici = posizione in extras)
   if (!elist.length) eg.innerHTML = '<div class="hint">Nessun extra.</div>';
-  elist.forEach(c => {
-    const w = document.createElement('div'); w.className = 'fav extra'; w.dataset.key = keyOf(c);
+  elist.forEach((c, idx) => {
+    const w = document.createElement('div'); w.className = 'fav extra'; w.dataset.idx = idx;
     w.appendChild(makeChordButton(c, true));
     const bar = document.createElement('div'); bar.className = 'bar';
     const h = document.createElement('div'); h.className = 'handle'; h.textContent = '⠿'; h.title = 'Trascina per riordinare';
-    bar.appendChild(h); w.appendChild(bar);
-    attachDrag(h, w, eg, 'extras');
+    const x = document.createElement('button'); x.className = 'mini'; x.textContent = '✕'; x.title = 'Rimuovi dagli extra';
+    x.onclick = () => { extras.splice(idx, 1); saveSecs(); buildChords(); };
+    bar.append(h, x); w.appendChild(bar);
+    attachDrag(h, w, eg);
     eg.appendChild(w);
   });
   root.appendChild(es);
@@ -562,46 +619,46 @@ $('#bpm').addEventListener('input', e => { bpm = +e.target.value; $('#bpmv').tex
 // ---------- scenari ----------
 function sanitize(d) {                       // file e link sono input non fidati: si accetta solo ciò che è valido
   if (!d || typeof d !== 'object') return null;
-  const ok = new Set(CHORDS.map(keyOf));
-  const keys = a => Array.isArray(a) ? [...new Set(a.filter(k => typeof k === 'string' && ok.has(k)))] : [];
-  const f = keys(d.favs), x = keys(d.extras).filter(k => !f.includes(k));
   const st = Array.isArray(d.steps) ? d.steps.filter(t => TOKENS.includes(t)).slice(0, 32) : [];
-  const dd = {};
-  if (d.durs && typeof d.durs === 'object') for (const k of f) if (DURS.includes(+d.durs[k])) dd[k] = +d.durs[k];
+  let sections;
+  if (Array.isArray(d.sections)) sections = cleanSecs(d.sections);
+  else {                                      // formato v1: un solo loop
+    const dd = d.durs && typeof d.durs === 'object' ? d.durs : {};
+    sections = cleanSecs([{ name: 'Ritornello 1', loop: d.loop, items: cleanKeys(d.favs).map(k => ({ k, d: dd[k] })) }]);
+  }
+  const used = new Set(sections.flatMap(x => x.items.map(it => it.k)));
   return {
-    app: 'guitarrish', v: 1,
+    app: 'guitarrish', v: 2,
     name: String(d.name == null ? '' : d.name).trim().slice(0, 80) || 'Senza titolo',
     notation: d.notation === 'en' ? 'en' : 'it',
     bpm: Math.min(200, Math.max(40, Math.round(+d.bpm) || 100)),
     steps: st.length >= 2 ? st : PATTERNS[1].steps.split(' '),
-    favs: f, extras: x, durs: dd, loop: d.loop !== false,
+    sections, extras: cleanKeys(d.extras).filter(k => !used.has(k)),
   };
 }
 function snapshot(name) {
-  return { app: 'guitarrish', v: 1, name, notation, bpm, steps: [...steps], favs: [...favs], extras: [...extras],
-    durs: Object.fromEntries(favs.filter(k => durs[k]).map(k => [k, durs[k]])), loop: seq.loop };
+  return { app: 'guitarrish', v: 2, name, notation, bpm, steps: [...steps],
+    sections: secs.map(x => ({ name: x.name, loop: x.loop, items: x.items.map(it => ({ k: it.k, d: it.d })) })), extras: [...extras] };
 }
 function setSettings(sc) {
-  notation = sc.notation; bpm = sc.bpm; steps = [...sc.steps]; seq.loop = sc.loop; stepIdx = 0;
+  notation = sc.notation; bpm = sc.bpm; steps = [...sc.steps]; stepIdx = 0;
   patIdx = PATTERNS.findIndex(p => p.steps === steps.join(' '));
   document.querySelectorAll('#notation button').forEach(x => x.classList.toggle('on', x.dataset.n === notation));
   $('#bpm').value = bpm; $('#bpmv').textContent = bpm;
 }
 function applyScenario(sc) {
   stopAll(); setSettings(sc);
-  favs = [...sc.favs]; extras = [...sc.extras];
-  for (const k of favs) { if (sc.durs[k]) durs[k] = sc.durs[k]; else delete durs[k]; }
-  saveDurs(); saveFavs();
+  secs = cleanSecs(sc.sections); extras = [...sc.extras]; targetSec = secs[0].id; saveSecs();
   buildPatterns(); buildSteps(); buildChords(); saveWork();
 }
 let currentId = null;
 function saveWork() {
-  try { localStorage.setItem('guitarrish.work', JSON.stringify({ notation, bpm, steps, loop: seq.loop, currentId })); } catch (e) {}
+  try { localStorage.setItem('guitarrish.work', JSON.stringify({ notation, bpm, steps, currentId })); } catch (e) {}
 }
 function loadWork() {
   try {
     const w = JSON.parse(localStorage.getItem('guitarrish.work') || 'null'); if (!w) return;
-    const sc = sanitize({ notation: w.notation, bpm: w.bpm, steps: w.steps, loop: w.loop });
+    const sc = sanitize({ notation: w.notation, bpm: w.bpm, steps: w.steps });
     setSettings(sc); currentId = typeof w.currentId === 'string' ? w.currentId : null;
   } catch (e) {}
 }
@@ -622,7 +679,7 @@ function renderLib() {
     const r = document.createElement('div'); r.className = 'sc' + (e.id === currentId ? ' cur' : '');
     const mk = (txt, title, fn) => { const b = document.createElement('button'); b.textContent = txt; b.title = title; b.onclick = fn; return b; };
     const nm = mk(e.name, 'Carica', () => loadScenario(e)); nm.classList.add('scname');
-    const info = document.createElement('small'); info.textContent = `${e.data.favs.length}+${e.data.extras.length} acc. · ${e.data.bpm} bpm`;
+    const info = document.createElement('small'); info.textContent = `${e.data.sections.length} rit. · ${e.data.sections.reduce((n, x) => n + x.items.length, 0)}+${e.data.extras.length} acc. · ${e.data.bpm} bpm`;
     r.append(nm, info, mk('⬇', 'Scarica file', () => download(e.data)), mk('🔗', 'Condividi link', () => share(e.data)),
       mk('🗑', 'Elimina', () => { if (confirm(`Eliminare «${e.name}»?`)) { lib = lib.filter(x => x.id !== e.id); if (currentId === e.id) { currentId = null; saveWork(); } saveLib(); renderLib(); } }));
     el.appendChild(r);
