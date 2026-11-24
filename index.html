@@ -324,8 +324,15 @@ function seqEnd() {                                        // fine naturale: las
 }
 function seqPlay(id) {
   ensureAudio();
-  if (running) stopSeq();
   clearTimeout(endTimer);
+  const sc = secById(id); if (!sc || !sc.items.length) return;
+  // se un accordo sta già suonando e fa parte del giro, si prosegue da quello (senza fermare il ritmo)
+  const at = running && activeKey ? sc.items.findIndex(it => it.k === activeKey) : -1;
+  if (running && at >= 0) {
+    seq.sec = id; seq.on = true; seq.i = at;
+    applySeqChord(false); updateSeqUI(); return;
+  }
+  if (running) stopSeq();
   seq.sec = id; seq.on = true; seq.i = 0;
   if (!applySeqChord(false)) { seq.on = false; return; }
   startSeq(); updateSeqUI();
