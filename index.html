@@ -46,6 +46,7 @@
   .favgrid { grid-template-columns:repeat(auto-fill,minmax(124px,1fr)) !important; }
   .fav select { flex:1; min-width:0; height:30px; background:#2d241c; color:var(--txt); border:1px solid var(--line); border-radius:6px; font:inherit; font-size:12px; }
   .fav.dragging { opacity:.4; }
+  .favgrid.drop-zone { outline:2px dashed var(--acc); outline-offset:4px; border-radius:8px; min-height:60px; }
   .fav.drop-before::before, .fav.drop-after::after { content:''; position:absolute; top:0; bottom:0; width:4px; border-radius:2px; background:var(--acc); }
   .fav.drop-before::before { left:-7px; }
   .fav.drop-after::after { right:-7px; }
@@ -262,7 +263,7 @@ const DURS = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16];   // numero di pennate (
 let durs = {};
 try { durs = JSON.parse(localStorage.getItem('guitarrish.durs') || '{}'); } catch (e) {}
 function saveDurs() { try { localStorage.setItem('guitarrish.durs', JSON.stringify(durs)); } catch (e) {} }
-const durOf = key => durs[key] || 2;                       // in battute del pattern
+const durOf = key => durs[key] || 1;                       // in battute del pattern
 const favChords = () => favs.map(k => CHORDS.find(c => keyOf(c) === k)).filter(Boolean);
 function applySeqChord(change) {
   const list = favChords(); if (!list.length) return false;
@@ -394,26 +395,32 @@ function attachDrag(handle, el, container, which) {
     e.preventDefault(); e.stopPropagation();
     handle.setPointerCapture(e.pointerId);
     el.classList.add('dragging');
-    let target = null, after = false;
-    const clear = () => container.querySelectorAll('.drop-before,.drop-after').forEach(x => x.classList.remove('drop-before', 'drop-after'));
+    let target = null, zone = null, after = false;   // target = tessera, zone = lista (anche vuota)
+    const clear = () => document.querySelectorAll('.drop-before,.drop-after,.drop-zone').forEach(x => x.classList.remove('drop-before', 'drop-after', 'drop-zone'));
     const move = ev => {
-      const t = document.elementsFromPoint(ev.clientX, ev.clientY).find(x => x !== el && x.classList.contains('fav') && x.parentNode === container);
-      clear(); target = null;
-      if (!t) return;
-      const r = t.getBoundingClientRect();
-      after = ev.clientX > r.left + r.width / 2; target = t;
-      t.classList.add(after ? 'drop-after' : 'drop-before');
+      const els = document.elementsFromPoint(ev.clientX, ev.clientY);
+      const t = els.find(x => x !== el && x.classList.contains('fav'));
+      clear(); target = null; zone = null;
+      if (t) {
+        const r = t.getBoundingClientRect();
+        after = ev.clientX > r.left + r.width / 2; target = t; zone = t.parentNode;
+        t.classList.add(after ? 'drop-after' : 'drop-before');
+      } else {
+        zone = els.find(x => x.classList.contains('favgrid')) || null;
+      }
+      if (zone) zone.classList.add('drop-zone');
     };
     const up = () => {
       handle.removeEventListener('pointermove', move);
       handle.removeEventListener('pointerup', up); handle.removeEventListener('pointercancel', up);
-      el.classList.remove('dragging'); clear();
-      if (target) {
+      el.classList.remove('dragging');
+      const z = zone, tg = target, af = after; clear();
+      if (z) {                                        // sposta (anche tra Preferiti ed Extra)
         const k = el.dataset.key;
-        const arr = (which === 'extras' ? extras : favs).filter(x => x !== k);
-        const ti = arr.indexOf(target.dataset.key);
-        arr.splice(after ? ti + 1 : ti, 0, k);
-        if (which === 'extras') extras = arr; else favs = arr;
+        favs = favs.filter(x => x !== k); extras = extras.filter(x => x !== k);
+        const arr = z.dataset.list === 'extras' ? extras : favs;
+        const ti = tg ? arr.indexOf(tg.dataset.key) : -1;
+        if (ti >= 0) arr.splice(af ? ti + 1 : ti, 0, k); else arr.push(k);
         saveFavs(); buildChords();
       }
     };
@@ -429,7 +436,7 @@ function buildChords() {
     <label><input type="checkbox" id="seqLoop"> Ripeti</label></div>
     <div class="hint" style="margin:-4px 0 8px">Sotto ogni accordo: ⠿ trascina per riordinare · − / + = numero di pennate (ripetizioni del ritmo) prima del prossimo accordo.</div>
     <div class="chords favgrid"></div>`;
-  const fg = fs.querySelector('.chords');
+  const fg = fs.querySelector('.chords'); fg.dataset.list = 'favs';
   const list = favChords();
   if (!list.length) fg.innerHTML = '<div class="hint">Tocca la ☆ in un angolo di un accordo per metterlo qui.</div>';
   list.forEach(c => {
@@ -440,7 +447,7 @@ function buildChords() {
     const h = document.createElement('div'); h.className = 'handle'; h.textContent = '⠿'; h.title = 'Trascina per riordinare';
     const st = document.createElement('div'); st.className = 'stepper'; st.title = 'Numero di pennate (ripetizioni del ritmo) prima di passare al prossimo accordo';
     const mk = (t, d) => { const x = document.createElement('button'); x.textContent = t; x.onclick = () => {
-      let i = DURS.indexOf(durOf(key)); if (i < 0) i = DURS.indexOf(2);
+      let i = DURS.indexOf(durOf(key)); if (i < 0) i = DURS.indexOf(1);
       i = Math.min(DURS.length - 1, Math.max(0, i + d)); durs[key] = DURS[i]; saveDurs(); lab.textContent = fmt(DURS[i]); }; return x; };
     const fmt = d => (d === 0.5 ? '½' : d) + ' pen.';
     const lab = document.createElement('span'); lab.textContent = fmt(durOf(key));
@@ -462,9 +469,9 @@ function buildChords() {
   root.appendChild(fs);
   const es = document.createElement('section');
   es.innerHTML = `<h2>◆ Extra · fuori dal loop (bridge, passaggi)</h2>
-    <div class="hint" style="margin:-4px 0 8px">Non fanno parte della sequenza: suonali a mano. Se li premi mentre il loop gira, il loop si ferma e suona l'extra. Per metterne uno qui tocca la stella di un accordo finché diventa ◆.</div>
+    <div class="hint" style="margin:-4px 0 8px">Non fanno parte della sequenza: suonali a mano. Se li premi mentre il loop gira, il loop si ferma e suona l'extra. Per metterne uno qui trascina un preferito con ⠿ oppure tocca la stella finché diventa ◆.</div>
     <div class="chords favgrid"></div>`;
-  const eg = es.querySelector('.chords');
+  const eg = es.querySelector('.chords'); eg.dataset.list = 'extras';
   const elist = extras.map(k => CHORDS.find(c => keyOf(c) === k)).filter(Boolean);
   if (!elist.length) eg.innerHTML = '<div class="hint">Nessun extra.</div>';
   elist.forEach(c => {
