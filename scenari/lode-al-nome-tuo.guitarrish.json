@@ -68,38 +68,6 @@
         {
           "k": "majC",
           "d": 1
-        },
-        {
-          "k": "majG",
-          "d": 1
-        },
-        {
-          "k": "majD",
-          "d": 1
-        },
-        {
-          "k": "minE",
-          "d": 1
-        },
-        {
-          "k": "majC",
-          "d": 1
-        },
-        {
-          "k": "majG",
-          "d": 1
-        },
-        {
-          "k": "majD",
-          "d": 1
-        },
-        {
-          "k": "majC",
-          "d": 1
-        },
-        {
-          "k": "majG",
-          "d": 1
         }
       ]
     },
@@ -107,38 +75,6 @@
       "name": "Ritornello (Tornerò a lodarti)",
       "loop": true,
       "items": [
-        {
-          "k": "majG",
-          "d": 1
-        },
-        {
-          "k": "majD",
-          "d": 1
-        },
-        {
-          "k": "minE",
-          "d": 1
-        },
-        {
-          "k": "majC",
-          "d": 1
-        },
-        {
-          "k": "majG",
-          "d": 1
-        },
-        {
-          "k": "majD",
-          "d": 1
-        },
-        {
-          "k": "minE",
-          "d": 1
-        },
-        {
-          "k": "majC",
-          "d": 1
-        },
         {
           "k": "majG",
           "d": 1

@@ -17,24 +17,8 @@
   "sections": [
     {
       "name": "Intro / Interludio (x2)",
-      "loop": false,
+      "loop": true,
       "items": [
-        {
-          "k": "majD",
-          "d": 2
-        },
-        {
-          "k": "minB",
-          "d": 2
-        },
-        {
-          "k": "minF#",
-          "d": 2
-        },
-        {
-          "k": "majG",
-          "d": 2
-        },
         {
           "k": "majD",
           "d": 2
@@ -57,26 +41,6 @@
       "name": "Strofa",
       "loop": true,
       "items": [
-        {
-          "k": "majD",
-          "d": 2
-        },
-        {
-          "k": "minE",
-          "d": 2
-        },
-        {
-          "k": "majG",
-          "d": 2
-        },
-        {
-          "k": "minF#",
-          "d": 2
-        },
-        {
-          "k": "majA",
-          "d": 2
-        },
         {
           "k": "majD",
           "d": 2
@@ -172,33 +136,13 @@
         {
           "k": "majG",
           "d": 2
-        },
-        {
-          "k": "majD",
-          "d": 2
         }
       ]
     },
     {
       "name": "Finale (x2)",
-      "loop": false,
+      "loop": true,
       "items": [
-        {
-          "k": "majG",
-          "d": 2
-        },
-        {
-          "k": "majD",
-          "d": 2
-        },
-        {
-          "k": "minB",
-          "d": 2
-        },
-        {
-          "k": "majA",
-          "d": 2
-        },
         {
           "k": "majG",
           "d": 2
