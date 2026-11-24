@@ -1,0 +1,244 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Roveto ardente (capo 4)",
+  "notation": "it",
+  "bpm": 72,
+  "steps": [
+    "D",
+    "-",
+    "-",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro",
+      "loop": false,
+      "items": [
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strofa",
+      "loop": true,
+      "items": [
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Tu sei, luce)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Special (A piedi nudi)",
+      "loop": true,
+      "items": [
+        {
+          "k": "minA",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

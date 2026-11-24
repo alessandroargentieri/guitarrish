@@ -1,0 +1,274 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Popoli tutti acclamate",
+  "notation": "it",
+  "bpm": 154,
+  "steps": [
+    "D",
+    "-",
+    "D",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro",
+      "loop": false,
+      "items": [
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strofa (Mio Dio, Signore)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Popoli tutti)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Canto di gioia",
+      "loop": true,
+      "items": [
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Finale in SI (un tono su)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majB",
+          "d": 1
+        },
+        {
+          "k": "minG#",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majF#",
+          "d": 1
+        },
+        {
+          "k": "majB",
+          "d": 1
+        },
+        {
+          "k": "minG#",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majF#",
+          "d": 1
+        },
+        {
+          "k": "majB",
+          "d": 1
+        },
+        {
+          "k": "minG#",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majF#",
+          "d": 1
+        },
+        {
+          "k": "majB",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

@@ -1,0 +1,202 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Scelgo te",
+  "notation": "it",
+  "bpm": 76,
+  "steps": [
+    "D",
+    "-",
+    "D",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro-Strofa-Outro",
+      "loop": true,
+      "items": [
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Bridge (Scelgo di seguirti)",
+      "loop": true,
+      "items": [
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Tu sei Santo)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majD",
+          "d": 2
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 2
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strumentale 2",
+      "loop": false,
+      "items": [
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 2
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 2
+        }
+      ]
+    },
+    {
+      "name": "Special (Segui il Signore x6)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

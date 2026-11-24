@@ -1,0 +1,42 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Santo (capo 4)",
+  "notation": "it",
+  "bpm": 74,
+  "steps": [
+    "D",
+    "-",
+    "D",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Giro unico (intro-strofa-rit-outro)",
+      "loop": true,
+      "items": [
+        {
+          "k": "minA",
+          "d": 1
+        },
+        {
+          "k": "minD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

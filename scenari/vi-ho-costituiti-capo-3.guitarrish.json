@@ -1,0 +1,204 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Vi ho costituiti (capo 3)",
+  "notation": "it",
+  "bpm": 80,
+  "steps": [
+    "D",
+    "-",
+    "D",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro-Finale (x4)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strofa",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Ora mi hai scelto)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strofa 2 (Io sono fragile)",
+      "loop": true,
+      "items": [
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

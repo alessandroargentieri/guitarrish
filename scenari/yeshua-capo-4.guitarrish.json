@@ -1,0 +1,82 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Yeshua (capo 4)",
+  "notation": "it",
+  "bpm": 70,
+  "steps": [
+    "D",
+    "-",
+    "-",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro-Strofa-Outro",
+      "loop": true,
+      "items": [
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Yeshua)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 2
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Special (Tuo è il regno)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

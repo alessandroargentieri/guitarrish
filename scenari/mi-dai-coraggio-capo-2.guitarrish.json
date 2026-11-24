@@ -1,0 +1,196 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Mi dai coraggio (capo 2)",
+  "notation": "it",
+  "bpm": 69,
+  "steps": [
+    "D",
+    "-",
+    "-",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro (x2)",
+      "loop": false,
+      "items": [
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strofa",
+      "loop": true,
+      "items": [
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Il tuo amore onda)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Bridge (Mi dai coraggio)",
+      "loop": true,
+      "items": [
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

@@ -1,0 +1,2158 @@
+[
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Mi dai coraggio (capo 2)",
+  "notation": "it",
+  "bpm": 69,
+  "steps": [
+   "D",
+   "-",
+   "-",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro (x2)",
+    "loop": false,
+    "items": [
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa",
+    "loop": true,
+    "items": [
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "minA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Il tuo amore onda)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Bridge (Mi dai coraggio)",
+    "loop": true,
+    "items": [
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Popoli tutti acclamate",
+  "notation": "it",
+  "bpm": 154,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro",
+    "loop": false,
+    "items": [
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa (Mio Dio, Signore)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Popoli tutti)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Canto di gioia",
+    "loop": true,
+    "items": [
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Finale in SI (un tono su)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majB",
+      "d": 1
+     },
+     {
+      "k": "minG#",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majF#",
+      "d": 1
+     },
+     {
+      "k": "majB",
+      "d": 1
+     },
+     {
+      "k": "minG#",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majF#",
+      "d": 1
+     },
+     {
+      "k": "majB",
+      "d": 1
+     },
+     {
+      "k": "minG#",
+      "d": 1
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "majF#",
+      "d": 1
+     },
+     {
+      "k": "majB",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Sulle mie labbra",
+  "notation": "it",
+  "bpm": 69,
+  "steps": [
+   "D",
+   "-",
+   "-",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro / Interludio (x2)",
+    "loop": false,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa",
+    "loop": true,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Sulle mie labbra)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Io ti loderò",
+    "loop": true,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 2
+     },
+     {
+      "k": "majE",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Finale (x2)",
+    "loop": false,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Sei la via (capo 4)",
+  "notation": "it",
+  "bpm": 72,
+  "steps": [
+   "D",
+   "-",
+   "-",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Giro (intro-strofa-rit-bridge-outro)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majF",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Rit. leggero (FA tenuto)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majF",
+      "d": 2
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Santo (capo 4)",
+  "notation": "it",
+  "bpm": 74,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Giro unico (intro-strofa-rit-outro)",
+    "loop": true,
+    "items": [
+     {
+      "k": "minA",
+      "d": 1
+     },
+     {
+      "k": "minD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Santo Spirito - Prendi il mio cuore (capo 3)",
+  "notation": "it",
+  "bpm": 140,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro-Strofa-Ritornello",
+    "loop": true,
+    "items": [
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Special-Instrumental 2",
+    "loop": true,
+    "items": [
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Outro",
+    "loop": false,
+    "items": [
+     {
+      "k": "majG",
+      "d": 2
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Yeshua (capo 4)",
+  "notation": "it",
+  "bpm": 70,
+  "steps": [
+   "D",
+   "-",
+   "-",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro-Strofa-Outro",
+    "loop": true,
+    "items": [
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Yeshua)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 2
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Special (Tuo è il regno)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Così sia",
+  "notation": "it",
+  "bpm": 72,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Strofa",
+    "loop": true,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minF#",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Sì, sì, Signore)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "sevA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Instrumental",
+    "loop": false,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Scelgo te",
+  "notation": "it",
+  "bpm": 76,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro-Strofa-Outro",
+    "loop": true,
+    "items": [
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Bridge (Scelgo di seguirti)",
+    "loop": true,
+    "items": [
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Tu sei Santo)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majD",
+      "d": 2
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 2
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strumentale 2",
+    "loop": false,
+    "items": [
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 2
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 2
+     }
+    ]
+   },
+   {
+    "name": "Special (Segui il Signore x6)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minB",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majA",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Vi ho costituiti (capo 3)",
+  "notation": "it",
+  "bpm": 80,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro-Finale (x4)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Ora mi hai scelto)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa 2 (Io sono fragile)",
+    "loop": true,
+    "items": [
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Lode al nome tuo",
+  "notation": "it",
+  "bpm": 96,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro-Bridge",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Tornerò a lodarti)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 2
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Roveto ardente (capo 4)",
+  "notation": "it",
+  "bpm": 72,
+  "steps": [
+   "D",
+   "-",
+   "-",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Intro",
+    "loop": false,
+    "items": [
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa",
+    "loop": true,
+    "items": [
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Tu sei, luce)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Special (A piedi nudi)",
+    "loop": true,
+    "items": [
+     {
+      "k": "minA",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minA",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minA",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ },
+ {
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Notte oscura",
+  "notation": "it",
+  "bpm": 78,
+  "steps": [
+   "D",
+   "-",
+   "D",
+   "U",
+   "-",
+   "U",
+   "D",
+   "U"
+  ],
+  "sections": [
+   {
+    "name": "Strofa 1",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majB",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Strofa 2",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Ritornello (Ma il Suo grido)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 2
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "minE",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   },
+   {
+    "name": "Special - Bridge (Sei musica)",
+    "loop": true,
+    "items": [
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 2
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majC",
+      "d": 1
+     },
+     {
+      "k": "majD",
+      "d": 1
+     },
+     {
+      "k": "majG",
+      "d": 1
+     }
+    ]
+   }
+  ],
+  "extras": []
+ }
+]

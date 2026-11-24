@@ -1,0 +1,178 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Lode al nome tuo",
+  "notation": "it",
+  "bpm": 96,
+  "steps": [
+    "D",
+    "-",
+    "D",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro-Bridge",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strofa",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Tornerò a lodarti)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 2
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

@@ -1,0 +1,74 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Santo Spirito - Prendi il mio cuore (capo 3)",
+  "notation": "it",
+  "bpm": 140,
+  "steps": [
+    "D",
+    "-",
+    "D",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro-Strofa-Ritornello",
+      "loop": true,
+      "items": [
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Special-Instrumental 2",
+      "loop": true,
+      "items": [
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Outro",
+      "loop": false,
+      "items": [
+        {
+          "k": "majG",
+          "d": 2
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

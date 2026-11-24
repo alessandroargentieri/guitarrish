@@ -1,0 +1,222 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Sulle mie labbra",
+  "notation": "it",
+  "bpm": 69,
+  "steps": [
+    "D",
+    "-",
+    "-",
+    "U",
+    "-",
+    "U",
+    "D",
+    "U"
+  ],
+  "sections": [
+    {
+      "name": "Intro / Interludio (x2)",
+      "loop": false,
+      "items": [
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Strofa",
+      "loop": true,
+      "items": [
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minE",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Sulle mie labbra)",
+      "loop": true,
+      "items": [
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Io ti loderò",
+      "loop": true,
+      "items": [
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 2
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Finale (x2)",
+      "loop": false,
+      "items": [
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majA",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}

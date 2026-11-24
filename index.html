@@ -88,7 +88,7 @@
     <button id="scDown">⬇ Scarica file</button>
     <button id="scShare">🔗 Condividi</button>
     <button id="scImport">📂 Importa file</button>
-    <input id="scFile" type="file" accept=".json,application/json" hidden>
+    <input id="scFile" type="file" accept=".json,application/json" multiple hidden>
   </div>
   <input id="scSearch" type="search" placeholder="Cerca scenario per nome…" autocomplete="off">
   <div id="scList"></div>
@@ -722,17 +722,31 @@ async function share(data) {
     await navigator.clipboard.writeText(url); msg(`Link a «${data.name}» copiato negli appunti.`);
   } catch (e) { if (e && e.name === 'AbortError') return; prompt('Copia il link:', url); }
 }
-function importText(text, fileName) {
-  let sc; try { if (text.length > 200000) throw 0; sc = sanitize(JSON.parse(text)); } catch (e) { sc = null; }
-  if (!sc) { msg('File non valido.'); return; }
-  applyScenario(sc); $('#scName').value = sc.name; saveCurrent();
+function upsertLib(sc) {                      // aggiunge/aggiorna per nome (usato dall'import)
+  const now = Date.now(); let e = lib.find(x => norm(x.name) === norm(sc.name));
+  if (e) { e.name = sc.name; e.data = sc; e.updated = now; }
+  else { e = { id: now.toString(36) + Math.random().toString(36).slice(2, 6), name: sc.name, data: sc, updated: now }; lib.push(e); }
+  return e;
+}
+function importText(text) {                   // un file può contenere uno scenario oppure una lista di scenari
+  let j; try { if (text.length > 2000000) throw 0; j = JSON.parse(text); } catch (e) { return 0; }
+  const list = (Array.isArray(j) ? j.slice(0, 200) : [j]).map(sanitize).filter(Boolean);
+  if (!list.length) return 0;
+  const entries = list.map(upsertLib);
+  if (list.length === 1) { applyScenario(list[0]); currentId = entries[0].id; $('#scName').value = list[0].name; saveWork(); }
+  saveLib(); renderLib();
+  return list.length;
 }
 $('#scSave').onclick = saveCurrent;
 $('#scName').addEventListener('keydown', e => { if (e.key === 'Enter') saveCurrent(); });
 $('#scDown').onclick = () => download(snapshot($('#scName').value.trim() || 'Senza titolo'));
 $('#scShare').onclick = () => share(snapshot($('#scName').value.trim() || 'Senza titolo'));
 $('#scImport').onclick = () => $('#scFile').click();
-$('#scFile').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) f.text().then(t => importText(t, f.name)); };
+$('#scFile').onchange = async e => {
+  const files = [...e.target.files]; e.target.value = ''; let n = 0, bad = 0;
+  for (const f of files) { const k = importText(await f.text()); if (k) n += k; else bad++; }
+  msg(n ? `Importati ${n} scenari${bad ? ` (${bad} file non validi)` : ''}.` : 'File non valido.');
+};
 $('#scSearch').addEventListener('input', renderLib);
 
 loadWork();
