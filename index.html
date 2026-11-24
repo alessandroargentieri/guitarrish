@@ -140,22 +140,34 @@ const bufCache = new Map();
 const live = new Set();     // note in riproduzione {src,gain,start}
 
 // ---------- audio ----------
-function ensureAudio() {
-  if (!ctx) {
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const comp = ctx.createDynamicsCompressor();
-    master = ctx.createGain(); master.gain.value = 0.9;
-    master.connect(comp); comp.connect(ctx.destination);
-  }
-  if (ctx.state === 'suspended') ctx.resume();
+const MAX_VOICES = 14, NOTE_SECS = 2.2;
+function initAudio() {
+  if (ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 5500; lp.Q.value = 0.5;
+  const lim = ctx.createDynamicsCompressor();       // usato come limiter
+  lim.threshold.value = -10; lim.knee.value = 6; lim.ratio.value = 20; lim.attack.value = 0.002; lim.release.value = 0.12;
+  master = ctx.createGain(); master.gain.value = 0.6;
+  master.connect(lp); lp.connect(lim); lim.connect(ctx.destination);
+  // pre-calcola le note a piccoli pezzi, così il primo colpo non blocca la pagina
+  const midis = new Set();
+  CHORDS.forEach(c => c[3].forEach((f, i) => { if (f >= 0) midis.add(OPEN[i] + f); }));
+  const todo = [...midis].sort((a, b) => a - b);
+  (function next() { if (todo.length) { ksBuffer(todo.shift()); setTimeout(next, 4); } })();
 }
+function ensureAudio() {
+  initAudio();
+  if (ctx.state !== 'running') ctx.resume();
+}
+// Chrome Android sblocca l'audio solo al rilascio del dito, non su pointerdown
+['pointerup', 'touchend', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, ensureAudio, { passive: true }));
 function ksBuffer(midi) {
   if (bufCache.has(midi)) return bufCache.get(midi);
   const sr = ctx.sampleRate, f = 440 * Math.pow(2, (midi - 69) / 12);
-  const N = Math.max(2, Math.round(sr / f)), len = Math.floor(sr * 3.2);
+  const N = Math.max(2, Math.round(sr / f)), len = Math.floor(sr * NOTE_SECS);
   const d = new Float32Array(N);
   for (let i = 0; i < N; i++) d[i] = Math.random() * 2 - 1;
-  for (let k = 0; k < 2; k++) for (let i = 1; i < N; i++) d[i] = (d[i] + d[i - 1]) * 0.5; // pizzico morbido
+  for (let k = 0; k < 3; k++) for (let i = 1; i < N; i++) d[i] = (d[i] + d[i - 1]) * 0.5; // pizzico morbido
   const buf = ctx.createBuffer(1, len, sr), o = buf.getChannelData(0);
   const decay = 0.9985 - Math.min(0.004, f / 120000);
   let p = 0, peak = 0;
@@ -164,21 +176,37 @@ function ksBuffer(midi) {
     o[i] = s; d[p] = (s + d[n]) * 0.5 * decay; p = n;
     if (Math.abs(s) > peak) peak = Math.abs(s);
   }
-  const g = 0.9 / (peak || 1);
-  for (let i = 0; i < len; i++) o[i] *= g;
+  const g = 0.9 / (peak || 1), tail = Math.floor(sr * 0.5);
+  for (let i = 0; i < len; i++) {
+    const w = i > len - tail ? 0.5 * (1 + Math.cos(Math.PI * (i - (len - tail)) / tail)) : 1; // chiude a zero, niente click
+    o[i] *= g * w;
+  }
   bufCache.set(midi, buf);
   return buf;
+}
+function fade(n, t, dur) {
+  if (n.fading) return;
+  n.fading = true;
+  const gp = n.gain.gain, v = t <= ctx.currentTime + 0.001 ? gp.value : n.vel;
+  gp.cancelScheduledValues(t);
+  gp.setValueAtTime(v, t);
+  gp.linearRampToValueAtTime(0, t + dur);
+  try { n.src.stop(t + dur + 0.02); } catch (e) {}
 }
 function pluck(midi, t, vel, damp) {
   const src = ctx.createBufferSource(); src.buffer = ksBuffer(midi);
   const g = ctx.createGain();
-  g.gain.setValueAtTime(vel, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vel, t + 0.003);       // micro-attacco: niente click
   if (damp) g.gain.linearRampToValueAtTime(0, t + 0.07);
   src.connect(g); g.connect(master);
-  const n = { src, gain: g, start: t, vel, damp };
+  const n = { src, gain: g, start: t, vel, damp, fading: false };
   live.add(n);
-  src.onended = () => live.delete(n);
+  src.onended = () => { live.delete(n); try { g.disconnect(); } catch (e) {} };
   src.start(t);
+  // limite di voci: le più vecchie sfumano
+  let active = 0; for (const x of live) if (!x.fading) active++;
+  for (const x of live) { if (active <= MAX_VOICES) break; if (!x.fading && x.start < t) { fade(x, ctx.currentTime, 0.08); active--; } }
 }
 function played(chord) {
   const r = [];
@@ -193,25 +221,18 @@ function strum(chord, dir, vel, damp) {
   notes.forEach((m, i) => {
     const jitter = Math.random() * 0.002;
     const v = vel * (0.85 + Math.random() * 0.15) * (dir === 'U' ? (0.55 + 0.45 * i / notes.length) : 1);
-    pluck(m, t0 + i * spread + jitter, v * 0.45, damp);
+    pluck(m, t0 + i * spread + jitter, v * 0.3, damp);
   });
 }
 // l'accordo vecchio sfuma dolcemente nel momento in cui entra il nuovo (come una mano che cambia posizione)
 function fadeOld(t, dur) {
-  for (const n of live) {
-    if (n.start >= t - 0.001 || n.damp) continue;
-    n.gain.gain.cancelScheduledValues(t);
-    n.gain.gain.setValueAtTime(n.vel, t);
-    n.gain.gain.linearRampToValueAtTime(0, t + dur);
-  }
+  for (const n of live) { if (n.start >= t - 0.001 || n.damp) continue; fade(n, t, dur); }
 }
 function silence() {
   const now = ctx.currentTime;
   for (const n of [...live]) {
     if (n.start > now) { try { n.src.stop(); n.src.disconnect(); } catch (e) {} live.delete(n); continue; }
-    n.gain.gain.cancelScheduledValues(now);
-    n.gain.gain.setValueAtTime(n.gain.gain.value, now);
-    n.gain.gain.linearRampToValueAtTime(0, now + 0.3);
+    fade(n, now, 0.3);
   }
 }
 
@@ -227,17 +248,17 @@ function playStep() {
   else if (tok === 'x') strum(c, 'D', 0.7, true);
   else if (/^[1-6]$/.test(tok)) {
     const notes = played(c);
-    pluck(notes[Math.min(+tok - 1, notes.length - 1)], nextTime, 0.45, false);
+    pluck(notes[Math.min(+tok - 1, notes.length - 1)], nextTime, 0.32, false);
   }
   const i = stepIdx, delay = Math.max(0, (nextTime - ctx.currentTime) * 1000);
   setTimeout(() => { if (running) highlight(i); }, delay);
   stepIdx = (stepIdx + 1) % steps.length;
   nextTime += stepDur();
 }
-function tick() { while (nextTime < ctx.currentTime + 0.12) playStep(); }
+function tick() { while (nextTime < ctx.currentTime + 0.2) playStep(); }
 function startSeq() {
   running = true; stepIdx = 0; nextTime = ctx.currentTime + 0.02;
-  tick(); timer = setInterval(tick, 25);
+  tick(); timer = setInterval(tick, 40);
 }
 function stopSeq() {
   running = false; pendingFade = false; clearInterval(timer); silence(); highlight(-1);
@@ -359,6 +380,7 @@ $('#notation').addEventListener('click', e => {
 $('#bpm').addEventListener('input', e => { bpm = +e.target.value; $('#bpmv').textContent = bpm; });
 
 buildChords(); buildPatterns(); loadPattern();
+initAudio();   // contesto sospeso + pre-calcolo note; si sblocca al primo tocco
 </script>
 </body>
 </html>
