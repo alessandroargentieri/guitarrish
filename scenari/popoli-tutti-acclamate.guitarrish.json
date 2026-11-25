@@ -3,7 +3,7 @@
   "v": 2,
   "name": "Popoli tutti acclamate",
   "notation": "it",
-  "bpm": 154,
+  "bpm": 128,
   "steps": [
     "D",
     "-",
@@ -16,30 +16,16 @@
   ],
   "sections": [
     {
-      "name": "Intro",
-      "loop": true,
-      "items": [
-        {
-          "k": "majA",
-          "d": 1
-        },
-        {
-          "k": "majE",
-          "d": 1
-        }
-      ]
-    },
-    {
       "name": "Strofa (Mio Dio, Signore)",
       "loop": true,
       "items": [
         {
           "k": "majA",
-          "d": 1
+          "d": 2
         },
         {
           "k": "majE",
-          "d": 1
+          "d": 2
         },
         {
           "k": "minF#",
@@ -47,6 +33,14 @@
         },
         {
           "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 2
+        },
+        {
+          "k": "majA",
           "d": 1
         },
         {
@@ -71,7 +65,7 @@
         },
         {
           "k": "majE",
-          "d": 1
+          "d": 2
         }
       ]
     },
@@ -94,13 +88,7 @@
         {
           "k": "majE",
           "d": 1
-        }
-      ]
-    },
-    {
-      "name": "Canto di gioia",
-      "loop": true,
-      "items": [
+        },
         {
           "k": "majA",
           "d": 1
@@ -116,19 +104,37 @@
         {
           "k": "majE",
           "d": 1
-        }
-      ]
-    },
-    {
-      "name": "Finale in SI (un tono su)",
-      "loop": true,
-      "items": [
+        },
         {
-          "k": "majB",
+          "k": "minF#",
+          "d": 2
+        },
+        {
+          "k": "majD",
+          "d": 2
+        },
+        {
+          "k": "majE",
           "d": 1
         },
         {
-          "k": "minG#",
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 2
+        },
+        {
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
           "d": 1
         },
         {
@@ -136,7 +142,35 @@
           "d": 1
         },
         {
-          "k": "majF#",
+          "k": "majA",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "minF#",
+          "d": 2
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majE",
+          "d": 1
+        },
+        {
+          "k": "majA",
           "d": 1
         }
       ]
