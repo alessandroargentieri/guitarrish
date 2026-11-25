@@ -18,6 +18,8 @@
     {
       "name": "Strofa (Mio Dio, Signore)",
       "loop": true,
+      "times": 2,
+      "goto": 1,
       "items": [
         {
           "k": "majA",
@@ -71,7 +73,9 @@
     },
     {
       "name": "Ritornello (Popoli tutti)",
-      "loop": true,
+      "loop": false,
+      "times": 1,
+      "goto": 0,
       "items": [
         {
           "k": "majA",
