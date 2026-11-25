@@ -27,7 +27,7 @@
   .step.cur { outline:2px solid var(--acc); background:#4a3922; }
   .hint { color:var(--mut); font-size:12px; margin-top:6px; }
   .chords { display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:10px; }
-  .chord { height:84px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(#3a2d21,#2a2118); color:var(--txt); font-size:22px; font-weight:700; touch-action:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .chord { height:84px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(#3a2d21,#2a2118); color:var(--txt); font-size:22px; font-weight:700; touch-action:pan-y; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   .chord small { font-size:11px; font-weight:400; color:var(--mut); }
   .chord.min { background:linear-gradient(#2f3340,#232632); }
   .chord.sev { background:linear-gradient(#40302a,#2c211d); }
@@ -457,8 +457,7 @@ function makeChordButton(c, isExtra, secId, idx) {
   star.className = 'star' + (inFav ? ' on' : inExtra ? ' extra' : '');
   star.textContent = inFav ? '★' : inExtra ? '◆' : '☆';
   star.title = inFav ? 'In un ritornello · tocca per spostarlo negli extra' : inExtra ? 'Extra (fuori dal loop) · tocca per toglierlo' : 'Tocca per aggiungerlo al ritornello selezionato';
-  star.addEventListener('pointerdown', e => {   // ☆ → ★ ritornello selezionato → ◆ extra → ☆
-    e.preventDefault(); e.stopPropagation();
+  onTap(star, () => {   // ☆ → ★ ritornello selezionato → ◆ extra → ☆
     if (inFav) { secs.forEach(x => { x.items = x.items.filter(it => it.k !== key); }); extras.push(key); }
     else if (inExtra) extras.splice(extras.indexOf(key), 1);
     else (secById(targetSec) || secs[0]).items.push({ k: key, d: 1 });
@@ -466,8 +465,8 @@ function makeChordButton(c, isExtra, secId, idx) {
   });
   b.appendChild(star);
   const chord = { frets: c[3] };
-  b.addEventListener('pointerdown', e => {
-    e.preventDefault(); ensureAudio();
+  onTap(b, () => {
+    ensureAudio();
     if (seq.on) { clearTimeout(endTimer); seq.on = false; updateSeqUI(); }   // il loop si ferma, ma l'accordo cliccato entra col legato
     if (activeKey === key) { stopAll(); return; }   // stesso accordo: stop
     activeKey = key; markActive();
@@ -477,6 +476,19 @@ function makeChordButton(c, isExtra, secId, idx) {
   });
   b.addEventListener('contextmenu', e => e.preventDefault());
   return b;
+}
+// mouse: subito; dito: solo se alzi senza aver scrollato (il browser manda pointercancel quando inizia lo scroll)
+function onTap(el, fn) {
+  el.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse') { e.preventDefault(); e.stopPropagation(); fn(e); return; }
+    e.stopPropagation();
+    const x0 = e.clientX, y0 = e.clientY, id = e.pointerId;
+    const off = () => { el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', off); el.removeEventListener('pointermove', mv); };
+    let moved = false;
+    const mv = ev => { if (ev.pointerId === id && Math.hypot(ev.clientX - x0, ev.clientY - y0) > 10) moved = true; };
+    const up = ev => { if (ev.pointerId !== id) return; off(); if (!moved) fn(ev); };
+    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', off); el.addEventListener('pointermove', mv);
+  });
 }
 function attachDrag(handle, el, container) {
   handle.addEventListener('pointerdown', e => {
