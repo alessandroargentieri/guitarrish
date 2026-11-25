@@ -291,7 +291,7 @@ function silence() {
 }
 
 // ---------- sequencer ----------
-const seq = { on: false, sec: null, i: 0, left: 0 };
+const seq = { on: false, sec: null, i: 0, left: 0, rep: 0 };
 let endTimer = null;
 const DURS = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16];   // numero di pennate (ripetizioni del ritmo)
 const secById = id => secs.find(x => x.id === id);
@@ -313,7 +313,15 @@ function seqStep() {                                       // false = sequenza f
   if (seq.left <= 0) {
     const n = seqItems().length, sc = secById(seq.sec);
     let next = seq.i + 1;
-    if (next >= n) { if (sc && sc.loop) next = 0; else return false; }
+    if (next >= n) {                                       // fine del giro
+      seq.rep++;
+      if (sc && (!sc.times || seq.rep < sc.times)) next = 0;            // ancora giri da fare (0 = infinito)
+      else {
+        const g = sc && sc.goto && secById(sc.goto);                    // GoTo: passa a un altro loop
+        if (!g || !g.items.length) return false;
+        seq.sec = g.id; seq.rep = 0; next = 0; updateSeqUI();
+      }
+    }
     seq.i = next; applySeqChord(true);
   }
   seq.left--; return true;
@@ -328,17 +336,17 @@ function seqPlay(id) {
   clearTimeout(endTimer);
   const sc = secById(id); if (!sc || !sc.items.length) return;
   if (running && seq.on && seq.sec !== id) {     // da un altro loop: si parte dall'inizio di questa sezione, senza stacchi
-    seq.sec = id; seq.i = 0; stepIdx = 0;
+    seq.sec = id; seq.i = 0; seq.rep = 0; stepIdx = 0;
     applySeqChord(true); updateSeqUI(); return;
   }
   // accordo suonato a mano e presente nel giro: si prosegue da quello (senza fermare il ritmo)
   const at = running && !seq.on && activeKey ? sc.items.findIndex(it => it.k === activeKey) : -1;
   if (running && at >= 0) {
-    seq.sec = id; seq.on = true; seq.i = at;
+    seq.sec = id; seq.on = true; seq.i = at; seq.rep = 0;
     applySeqChord(false); updateSeqUI(); return;
   }
   if (running) stopSeq();
-  seq.sec = id; seq.on = true; seq.i = 0;
+  seq.sec = id; seq.on = true; seq.i = 0; seq.rep = 0;
   if (!applySeqChord(false)) { seq.on = false; return; }
   startSeq(); updateSeqUI();
 }
@@ -394,18 +402,24 @@ function label(c) {
 }
 const keyOf = c => c[0] + c[1];
 const uid = () => Math.random().toString(36).slice(2, 8);
-const newSec = name => ({ id: uid(), name, loop: true, items: [] });
+const TIMES = [0, 1, 2, 3, 4, 6, 8];                       // giri del loop: 0 = infinito
+const newSec = name => ({ id: uid(), name, loop: true, times: 0, goto: null, items: [] });
 function cleanSecs(raw) {                                  // valida sezioni (da storage, file o link)
   const ok = new Set(CHORDS.map(keyOf)), seen = new Set();
   let out = (Array.isArray(raw) ? raw : []).slice(0, 20).filter(x => x && typeof x === 'object').map((x, i) => {
     let id = typeof x.id === 'string' && /^[a-z0-9]{1,12}$/.test(x.id) ? x.id : uid();
     while (seen.has(id)) id = uid(); seen.add(id);
+    const times = TIMES.includes(+x.times) && x.times !== null && x.times !== '' ? +x.times : (x.loop === false ? 1 : 0);
     return {
-      id, name: String(x.name == null ? '' : x.name).trim().slice(0, 40) || 'Ritornello ' + (i + 1), loop: x.loop !== false,
+      id, name: String(x.name == null ? '' : x.name).trim().slice(0, 40) || 'Ritornello ' + (i + 1), loop: times !== 1, times, goto: x.goto,
       items: (Array.isArray(x.items) ? x.items : []).slice(0, 64).filter(it => it && ok.has(it.k)).map(it => ({ k: it.k, d: DURS.includes(+it.d) ? +it.d : 1 })),
     };
   });
   if (!out.length) out = [newSec('Ritornello 1')];
+  out.forEach(x => {                                       // goto: id (storage) o indice (file) -> id valido
+    const g = x.goto;
+    x.goto = typeof g === 'string' && out.some(y => y.id === g) ? g : Number.isInteger(g) && out[g] ? out[g].id : null;
+  });
   return out;
 }
 const cleanKeys = a => Array.isArray(a) ? [...new Set(a.filter(k => typeof k === 'string' && CHORDS.some(c => keyOf(c) === k)))] : [];
@@ -513,21 +527,31 @@ function buildChords() {
     const box = document.createElement('section'); box.className = 'secbox' + (sc.id === targetSec ? ' target' : '');
     const hd = document.createElement('div'); hd.className = 'favbar';
     const nm = document.createElement('input'); nm.type = 'text'; nm.className = 'secname'; nm.maxLength = 40; nm.value = sc.name; nm.setAttribute('aria-label', 'Nome del ritornello');
-    nm.onchange = () => { sc.name = nm.value.trim().slice(0, 40) || 'Ritornello ' + (si + 1); nm.value = sc.name; saveSecs(); };
+    nm.onchange = () => { sc.name = nm.value.trim().slice(0, 40) || 'Ritornello ' + (si + 1); nm.value = sc.name; saveSecs(); buildChords(); };
     const play = document.createElement('button'); play.className = 'play seqBtn'; play.dataset.sec = sc.id; play.disabled = !sc.items.length;
     play.onclick = () => { if (seq.on && seq.sec === sc.id) stopAll(); else seqPlay(sc.id); };
-    const lab = document.createElement('label'); const lp = document.createElement('input'); lp.type = 'checkbox'; lp.checked = sc.loop;
-    lp.onchange = () => { sc.loop = lp.checked; saveSecs(); }; lab.append(lp, ' Ripeti');
+    const lab = document.createElement('label'); lab.title = 'Quante volte suona il giro prima di passare oltre';
+    const ts = document.createElement('select'); ts.setAttribute('aria-label', 'Giri del loop');
+    TIMES.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t ? '×' + t : '∞'; ts.appendChild(o); });
+    ts.value = sc.times; ts.onchange = () => { sc.times = +ts.value; sc.loop = sc.times !== 1; saveSecs(); buildChords(); };
+    lab.append('Giri ', ts);
+    const lg = document.createElement('label'); lg.title = 'Finiti i giri, parte questo loop (GoTo)';
+    const gs = document.createElement('select'); gs.setAttribute('aria-label', 'Poi vai a');
+    const o0 = document.createElement('option'); o0.value = ''; o0.textContent = '■ fine'; gs.appendChild(o0);
+    secs.forEach((o, oi) => { const op = document.createElement('option'); op.value = o.id; op.textContent = '→ ' + (o.name || 'Ritornello ' + (oi + 1)); gs.appendChild(op); });
+    gs.value = sc.goto || ''; gs.disabled = !sc.times;
+    gs.onchange = () => { sc.goto = gs.value || null; saveSecs(); };
+    lg.append('Poi ', gs);
     const tg = document.createElement('button'); tg.className = 'pill' + (sc.id === targetSec ? ' on' : ''); tg.textContent = sc.id === targetSec ? '★ Aggiungi qui' : 'Aggiungi qui';
     tg.title = 'Gli accordi che marchi con la stella finiscono in questo ritornello';
     tg.onclick = () => { targetSec = sc.id; saveSecs(); buildChords(); };
     const del = document.createElement('button'); del.className = 'clear'; del.textContent = secs.length > 1 ? '✕ Elimina' : 'Svuota';
     del.onclick = () => {
-      if (secs.length > 1) { if (sc.items.length && !confirm(`Eliminare «${sc.name}»?`)) return; stopAll(); secs.splice(si, 1); if (targetSec === sc.id) targetSec = secs[0].id; }
+      if (secs.length > 1) { if (sc.items.length && !confirm(`Eliminare «${sc.name}»?`)) return; stopAll(); secs.splice(si, 1); secs.forEach(o => { if (o.goto === sc.id) o.goto = null; }); if (targetSec === sc.id) targetSec = secs[0].id; }
       else { stopAll(); sc.items = []; }
       saveSecs(); buildChords();
     };
-    hd.append(nm, play, lab, tg, del); box.appendChild(hd);
+    hd.append(nm, play, lab, lg, tg, del); box.appendChild(hd);
     const fg = document.createElement('div'); fg.className = 'chords favgrid'; fg.dataset.list = sc.id; box.appendChild(fg);
     const list = sc.items.map((it, idx) => ({ it, idx, c: CHORDS.find(c => keyOf(c) === it.k) })).filter(x => x.c);
     if (!list.length) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = 'Vuoto: tocca la ☆ sugli accordi (con «Aggiungi qui» attivo) o trascinaci un accordo.'; fg.appendChild(h); }
@@ -647,7 +671,7 @@ function sanitize(d) {                       // file e link sono input non fidat
 }
 function snapshot(name) {
   return { app: 'guitarrish', v: 2, name, notation, bpm, steps: [...steps],
-    sections: secs.map(x => ({ name: x.name, loop: x.loop, items: x.items.map(it => ({ k: it.k, d: it.d })) })), extras: [...extras] };
+    sections: secs.map(x => ({ name: x.name, loop: x.loop, times: x.times, goto: x.goto ? secs.findIndex(y => y.id === x.goto) : null, items: x.items.map(it => ({ k: it.k, d: it.d })) })), extras: [...extras] };
 }
 function setSettings(sc) {
   notation = sc.notation; bpm = sc.bpm; steps = [...sc.steps]; stepIdx = 0;
