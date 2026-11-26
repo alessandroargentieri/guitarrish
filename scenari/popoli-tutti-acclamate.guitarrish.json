@@ -5,21 +5,61 @@
   "notation": "it",
   "bpm": 128,
   "steps": [
-    "D",
+    "1",
     "-",
-    "D",
-    "U",
+    "u",
+    "x",
     "-",
-    "U",
-    "D",
-    "U"
+    "2",
+    "d",
+    "6"
+  ],
+  "custom": [
+    "1",
+    "-",
+    "u",
+    "x",
+    "-",
+    "2",
+    "d",
+    "6"
   ],
   "sections": [
     {
+      "name": "Intro",
+      "loop": false,
+      "pat": "custom",
+      "times": 1,
+      "goto": 1,
+      "items": [
+        {
+          "k": "majA",
+          "d": 2
+        },
+        {
+          "k": "majE",
+          "d": 2
+        },
+        {
+          "k": "minF#",
+          "d": 2
+        },
+        {
+          "k": "majE",
+          "d": 2
+        },
+        {
+          "k": "majD",
+          "d": 2
+        }
+      ]
+    },
+    {
       "name": "Strofa (Mio Dio, Signore)",
       "loop": true,
+      "pat": "D - D U - U D U",
       "times": 2,
-      "goto": 1,
+      "goto": 2,
       "items": [
         {
           "k": "majA",
@@ -74,8 +114,9 @@
     {
       "name": "Ritornello (Popoli tutti)",
       "loop": false,
+      "pat": "D - D U - U D U",
       "times": 1,
-      "goto": 0,
+      "goto": 1,
       "items": [
         {
           "k": "majA",
