@@ -194,6 +194,8 @@ let notation = 'it';
 let steps = [];
 let bpm = 100;
 let patIdx = 1;
+let custom = PATTERNS[1].steps.split(' ');   // pennata personalizzata, salvata nello scenario
+const CUSTOM = PATTERNS.length;             // indice del pulsante «Personalizzata»
 let activeKey = null;       // accordo attualmente 'agganciato'
 let ctx, master;
 const bufCache = new Map();
@@ -301,6 +303,15 @@ const seq = { on: false, sec: null, i: 0, left: 0, rep: 0 };
 let endTimer = null;
 const DURS = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16];   // numero di pennate (ripetizioni del ritmo)
 const secById = id => secs.find(x => x.id === id);
+function secSteps(sc) {                                    // pennata di un ritornello: '' = globale, 'custom', oppure una pennata fissa
+  if (!sc || !sc.pat) return steps;
+  return sc.pat === 'custom' ? custom : sc.pat.split(' ');
+}
+const curSteps = () => seq.on ? secSteps(secById(seq.sec)) : steps;
+let shownKey = '';
+function syncShown() {                                     // la griglia mostra la pennata che sta suonando
+  const a = curSteps(); if (a.join(' ') !== shownKey) buildSteps(a);
+}
 function seqItems() {
   const sc = secById(seq.sec);
   return sc ? sc.items.map(it => ({ c: CHORDS.find(c => keyOf(c) === it.k), d: it.d })).filter(x => x.c) : [];
@@ -310,7 +321,8 @@ function applySeqChord(change) {
   if (seq.i >= list.length) seq.i = 0;
   const { c, d } = list[seq.i];
   curChord = { frets: c[3] }; activeKey = keyOf(c); markActive();
-  seq.left = Math.max(1, Math.round(d * steps.length));
+  seq.left = Math.max(1, Math.round(d * curSteps().length));
+  syncShown();
   if (change) pendingFade = true;
   return true;
 }
@@ -357,6 +369,7 @@ function seqPlay(id) {
   startSeq(); updateSeqUI();
 }
 function updateSeqUI() {
+  syncShown();
   document.querySelectorAll('.seqBtn').forEach(b => {
     const on = seq.on && seq.sec === b.dataset.sec;
     b.textContent = on ? '■ Stop' : '▶ Suona in ordine';
@@ -367,7 +380,8 @@ let pendingFade = false, running = false, stepIdx = 0, nextTime = 0, timer = nul
 function stepDur() { return 60 / bpm / 2; }
 function playStep() {
   if (!seqStep()) { seqEnd(); return; }
-  const tok = steps[stepIdx];
+  const cs = curSteps(); stepIdx %= cs.length;
+  const tok = cs[stepIdx];
   const c = curChord;
   if (pendingFade && tok !== '-') { fadeOld(nextTime, 0.16); pendingFade = false; }
   if (tok === 'D' || tok === 'd') strum(c, 'D', tok === 'D' ? 1 : 0.6);
@@ -379,7 +393,7 @@ function playStep() {
   }
   const i = stepIdx, delay = Math.max(0, (nextTime - ctx.currentTime) * 1000);
   setTimeout(() => { if (running) highlight(i); }, delay);
-  stepIdx = (stepIdx + 1) % steps.length;
+  stepIdx = (stepIdx + 1) % cs.length;
   nextTime += stepDur();
 }
 function tick() { while (running && nextTime < ctx.currentTime + 0.2) playStep(); }
@@ -408,8 +422,13 @@ function label(c) {
 }
 const keyOf = c => c[0] + c[1];
 const uid = () => Math.random().toString(36).slice(2, 8);
+const cleanPat = p => {                                    // '' | 'custom' | pennata fissa (stringa di passi validi)
+  if (p === 'custom') return 'custom';
+  const a = typeof p === 'string' ? p.split(' ') : [];
+  return a.length >= 2 && a.length <= 32 && a.every(t => TOKENS.includes(t)) ? a.join(' ') : '';
+};
 const TIMES = [0, 1, 2, 3, 4, 6, 8];                       // giri del loop: 0 = infinito
-const newSec = name => ({ id: uid(), name, loop: true, times: 0, goto: null, items: [] });
+const newSec = name => ({ id: uid(), name, loop: true, times: 0, goto: null, pat: '', items: [] });
 function cleanSecs(raw) {                                  // valida sezioni (da storage, file o link)
   const ok = new Set(CHORDS.map(keyOf)), seen = new Set();
   let out = (Array.isArray(raw) ? raw : []).slice(0, 20).filter(x => x && typeof x === 'object').map((x, i) => {
@@ -417,7 +436,7 @@ function cleanSecs(raw) {                                  // valida sezioni (da
     while (seen.has(id)) id = uid(); seen.add(id);
     const times = TIMES.includes(+x.times) && x.times !== null && x.times !== '' ? +x.times : (x.loop === false ? 1 : 0);
     return {
-      id, name: String(x.name == null ? '' : x.name).trim().slice(0, 40) || 'Ritornello ' + (i + 1), loop: times !== 1, times, goto: x.goto,
+      id, name: String(x.name == null ? '' : x.name).trim().slice(0, 40) || 'Ritornello ' + (i + 1), loop: times !== 1, times, goto: x.goto, pat: cleanPat(x.pat),
       items: (Array.isArray(x.items) ? x.items : []).slice(0, 64).filter(it => it && ok.has(it.k)).map(it => ({ k: it.k, d: DURS.includes(+it.d) ? +it.d : 1 })),
     };
   });
@@ -594,7 +613,13 @@ function buildChords() {
     };
     box.dataset.sec = sc.id;
     const sh = document.createElement('div'); sh.className = 'sechandle'; sh.textContent = '⠿'; sh.title = 'Trascina per spostare il ritornello'; attachSecDrag(sh, box, sc);
-    hd.append(sh, nm, play, lab, lg, tg, del); box.appendChild(hd);
+    const lp = document.createElement('label'); lp.title = 'Pennata di questo ritornello (Globale = quella scelta in alto)';
+    const ps = document.createElement('select'); ps.setAttribute('aria-label', 'Pennata del ritornello');
+    [['', 'Globale'], ...PATTERNS.map(p => [p.steps, p.name]), ['custom', '✎ Personalizzata']].forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; ps.appendChild(o); });
+    ps.value = sc.pat || ''; if (ps.value !== (sc.pat || '')) ps.value = '';
+    ps.onchange = () => { sc.pat = ps.value; saveSecs(); if (seq.on && seq.sec === sc.id) syncShown(); };
+    lp.append('Pennata ', ps);
+    hd.append(sh, nm, play, lab, lg, lp, tg, del); box.appendChild(hd);
     const fg = document.createElement('div'); fg.className = 'chords favgrid'; fg.dataset.list = sc.id; box.appendChild(fg);
     const list = sc.items.map((it, idx) => ({ it, idx, c: CHORDS.find(c => keyOf(c) === it.k) })).filter(x => x.c);
     if (!list.length) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = 'Vuoto: tocca la ☆ sugli accordi (con «Aggiungi qui» attivo) o trascinaci un accordo.'; fg.appendChild(h); }
@@ -662,21 +687,31 @@ function buildPatterns() {
     b.onclick = () => { patIdx = i; loadPattern(); buildPatterns(); saveWork(); };
     el.appendChild(b);
   });
+  const cb = document.createElement('button'); cb.textContent = '✎ Personalizzata'; if (patIdx === CUSTOM) cb.classList.add('on');
+  cb.title = 'Pennata tua, salvata con questo scenario: modifica le celle qui sotto';
+  cb.onclick = () => { patIdx = CUSTOM; loadPattern(); buildPatterns(); saveWork(); };
+  el.appendChild(cb);
 }
 function loadPattern() {
-  steps = PATTERNS[patIdx].steps.split(' ');
+  steps = patIdx === CUSTOM ? [...custom] : PATTERNS[patIdx].steps.split(' ');
   if (stepIdx >= steps.length) stepIdx = 0;
   buildSteps();
 }
-function buildSteps() {
-  const el = $('#steps'); el.innerHTML = '';
-  steps.forEach((t, i) => {
+function buildSteps(arr = steps) {
+  const el = $('#steps'); el.innerHTML = ''; shownKey = arr.join(' ');
+  const own = arr === steps;                               // la pennata di un ritornello in riproduzione si vede ma non si modifica da qui
+  arr.forEach((t, i) => {
     const d = document.createElement('div');
     d.className = 'step' + (i % 2 === 0 ? ' beat' : '');
     d.dataset.i = i;
     d.innerHTML = `${t === 'D' || t === 'd' ? '↓' : t === 'U' || t === 'u' ? '↑' : t === '-' ? '·' : t}<small>${t === 'd' || t === 'u' ? 'piano' : t === 'x' ? 'smorz.' : (i % 2 === 0 ? (i / 2 + 1) : '&')}</small>`;
     if (t === 'd' || t === 'u') d.style.opacity = .7;
-    d.onclick = () => { steps[i] = TOKENS[(TOKENS.indexOf(t) + 1) % TOKENS.length]; buildSteps(); saveWork(); };
+    if (own) d.onclick = () => {
+      steps[i] = TOKENS[(TOKENS.indexOf(t) + 1) % TOKENS.length];
+      custom = [...steps];                                   // ogni modifica diventa la pennata personalizzata
+      if (patIdx !== CUSTOM) { patIdx = CUSTOM; buildPatterns(); }
+      buildSteps(); saveWork();
+    };
     el.appendChild(d);
   });
 }
@@ -709,16 +744,19 @@ function sanitize(d) {                       // file e link sono input non fidat
     notation: d.notation === 'en' ? 'en' : 'it',
     bpm: Math.min(200, Math.max(40, Math.round(+d.bpm) || 100)),
     steps: st.length >= 2 ? st : PATTERNS[1].steps.split(' '),
+    custom: Array.isArray(d.custom) && d.custom.filter(t => TOKENS.includes(t)).length >= 2 ? d.custom.filter(t => TOKENS.includes(t)).slice(0, 32) : null,
     sections, extras: cleanKeys(d.extras).filter(k => !used.has(k)),
   };
 }
 function snapshot(name) {
-  return { app: 'guitarrish', v: 2, name, notation, bpm, steps: [...steps],
-    sections: secs.map(x => ({ name: x.name, loop: x.loop, times: x.times, goto: x.goto ? secs.findIndex(y => y.id === x.goto) : null, items: x.items.map(it => ({ k: it.k, d: it.d })) })), extras: [...extras] };
+  return { app: 'guitarrish', v: 2, name, notation, bpm, steps: [...steps], custom: [...custom],
+    sections: secs.map(x => ({ name: x.name, loop: x.loop, pat: x.pat || '', times: x.times, goto: x.goto ? secs.findIndex(y => y.id === x.goto) : null, items: x.items.map(it => ({ k: it.k, d: it.d })) })), extras: [...extras] };
 }
 function setSettings(sc) {
   notation = sc.notation; bpm = sc.bpm; steps = [...sc.steps]; stepIdx = 0;
+  custom = sc.custom ? [...sc.custom] : [...steps];
   patIdx = PATTERNS.findIndex(p => p.steps === steps.join(' '));
+  if (patIdx < 0) patIdx = CUSTOM;
   document.querySelectorAll('#notation button').forEach(x => x.classList.toggle('on', x.dataset.n === notation));
   $('#bpm').value = bpm; $('#bpmv').textContent = bpm;
 }
@@ -729,12 +767,12 @@ function applyScenario(sc) {
 }
 let currentId = null;
 function saveWork() {
-  try { localStorage.setItem('guitarrish.work', JSON.stringify({ notation, bpm, steps, currentId })); } catch (e) {}
+  try { localStorage.setItem('guitarrish.work', JSON.stringify({ notation, bpm, steps, custom, currentId })); } catch (e) {}
 }
 function loadWork() {
   try {
     const w = JSON.parse(localStorage.getItem('guitarrish.work') || 'null'); if (!w) return;
-    const sc = sanitize({ notation: w.notation, bpm: w.bpm, steps: w.steps });
+    const sc = sanitize({ notation: w.notation, bpm: w.bpm, steps: w.steps, custom: w.custom });
     setSettings(sc); currentId = typeof w.currentId === 'string' ? w.currentId : null;
   } catch (e) {}
 }
