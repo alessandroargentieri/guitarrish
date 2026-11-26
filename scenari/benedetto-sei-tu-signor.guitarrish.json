@@ -1,0 +1,197 @@
+{
+  "app": "guitarrish",
+  "v": 2,
+  "name": "Benedetto sei Tu Signor",
+  "notation": "it",
+  "bpm": 128,
+  "steps": [
+    "1",
+    "-",
+    "d",
+    "u",
+    "-",
+    "u",
+    "2",
+    "u"
+  ],
+  "custom": [
+    "1",
+    "-",
+    "d",
+    "u",
+    "-",
+    "u",
+    "2",
+    "u"
+  ],
+  "sections": [
+    {
+      "name": "Intro",
+      "loop": false,
+      "pat": "custom",
+      "times": 1,
+      "goto": 1,
+      "items": [
+        {
+          "k": "majG",
+          "d": 2
+        },
+        {
+          "k": "minA",
+          "d": 2
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 0.5
+        },
+        {
+          "k": "majD",
+          "d": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Strofa (Padre del Cielo)",
+      "loop": false,
+      "pat": "D - d U - U d U",
+      "times": 1,
+      "goto": 2,
+      "items": [
+        {
+          "k": "majG",
+          "d": 2
+        },
+        {
+          "k": "minA",
+          "d": 2
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 0.5
+        },
+        {
+          "k": "majD",
+          "d": 0.5
+        },
+        {
+          "k": "majG",
+          "d": 2
+        },
+        {
+          "k": "minA",
+          "d": 2
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    },
+    {
+      "name": "Ritornello (Benedetto sei Tu Signore)",
+      "loop": true,
+      "pat": "D - D U - U D U",
+      "times": 2,
+      "goto": 0,
+      "items": [
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "sevD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        },
+        {
+          "k": "minB",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "minA",
+          "d": 1
+        },
+        {
+          "k": "majC",
+          "d": 1
+        },
+        {
+          "k": "majD",
+          "d": 1
+        },
+        {
+          "k": "majG",
+          "d": 1
+        }
+      ]
+    }
+  ],
+  "extras": []
+}
