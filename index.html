@@ -66,6 +66,10 @@
   .sc.cur .scname { border-color:var(--acc); color:var(--acc); }
   .sc small { color:var(--mut); font-size:11px; white-space:nowrap; }
   .secbox { margin-bottom:12px; }
+  .secbox.dragging { opacity:.4; }
+  .secbox.sec-before { box-shadow:0 -4px 0 var(--acc); }
+  .secbox.sec-after { box-shadow:0 4px 0 var(--acc); }
+  .sechandle { width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:6px; background:#2d241c; border:1px solid var(--line); color:var(--mut); touch-action:none; cursor:grab; font-size:16px; }
   .secbox.target { border-color:var(--acc); }
   input.secname { background:#2d241c; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit; font-weight:600; flex:1 1 140px; min-width:0; }
   button.pill { background:none; border:1px solid var(--line); color:var(--mut); border-radius:999px; padding:6px 10px; font:inherit; font-size:12px; cursor:pointer; }
@@ -490,6 +494,29 @@ function onTap(el, fn) {
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', off); el.addEventListener('pointermove', mv);
   });
 }
+function attachSecDrag(handle, box, sc) {          // riordina i ritornelli trascinando la maniglia
+  handle.addEventListener('pointerdown', e => {
+    e.preventDefault(); handle.setPointerCapture(e.pointerId); box.classList.add('dragging');
+    let tgt = null, after = false;
+    const clear = () => document.querySelectorAll('.sec-before,.sec-after').forEach(x => x.classList.remove('sec-before', 'sec-after'));
+    const move = ev => {
+      clear(); tgt = null;
+      const t = document.elementsFromPoint(ev.clientX, ev.clientY).find(x => x !== box && x.classList && x.classList.contains('secbox'));
+      if (t) { const r = t.getBoundingClientRect(); after = ev.clientY > r.top + r.height / 2; tgt = t; t.classList.add(after ? 'sec-after' : 'sec-before'); }
+      if (ev.clientY < 60) scrollBy(0, -12); else if (ev.clientY > innerHeight - 60) scrollBy(0, 12);
+    };
+    const end = ev => {
+      handle.removeEventListener('pointermove', move); handle.removeEventListener('pointerup', end); handle.removeEventListener('pointercancel', end);
+      clear(); box.classList.remove('dragging');
+      if (ev.type === 'pointerup' && tgt) {
+        const from = secs.indexOf(sc); secs.splice(from, 1);
+        let to = secs.findIndex(x => x.id === tgt.dataset.sec) + (after ? 1 : 0);
+        secs.splice(to, 0, sc); saveSecs(); buildChords();
+      }
+    };
+    handle.addEventListener('pointermove', move); handle.addEventListener('pointerup', end); handle.addEventListener('pointercancel', end);
+  });
+}
 function attachDrag(handle, el, container) {
   handle.addEventListener('pointerdown', e => {
     e.preventDefault(); e.stopPropagation();
@@ -565,7 +592,9 @@ function buildChords() {
       else { stopAll(); sc.items = []; }
       saveSecs(); buildChords();
     };
-    hd.append(nm, play, lab, lg, tg, del); box.appendChild(hd);
+    box.dataset.sec = sc.id;
+    const sh = document.createElement('div'); sh.className = 'sechandle'; sh.textContent = '⠿'; sh.title = 'Trascina per spostare il ritornello'; attachSecDrag(sh, box, sc);
+    hd.append(sh, nm, play, lab, lg, tg, del); box.appendChild(hd);
     const fg = document.createElement('div'); fg.className = 'chords favgrid'; fg.dataset.list = sc.id; box.appendChild(fg);
     const list = sc.items.map((it, idx) => ({ it, idx, c: CHORDS.find(c => keyOf(c) === it.k) })).filter(x => x.c);
     if (!list.length) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = 'Vuoto: tocca la ☆ sugli accordi (con «Aggiungi qui» attivo) o trascinaci un accordo.'; fg.appendChild(h); }
